@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="{% static 'core/img/favicon.png' %}" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이전 진료기록 보기</title>
+
+    <link rel="stylesheet" href="{% static 'emr/css/view_previous_medical_records.css' %}">
+</head>
+<body>
+
+    {% include "core/_header.html" %}
+
+    <script>
+        const PATIENT_ID = "{{ patient.user_id }}";
+    </script>
+
+
+    <div class="container">
+        <h2>이전 진료기록 보기</h2>
+        
+        <div class="patient-info-header">
+            <span><strong>환자명:</strong> {{ patient.name }}</span>
+            <span><strong>성별:</strong> {{ patient.gender }}</span>
+            <span><strong>생년월일:</strong> {{ birth }}</span>
+            <span><strong>방문일시:</strong> {{ visit_datetime }}</span>
+            <span><strong>진료과:</strong> {{ department }}</span>
+            <span><strong>담당의:</strong> {{ doctor_name }}</span>
+        </div>
+
+
+        <div class="record-view-grid">
+            
+            <div class="panel" id="recordList">
+                <h3>이전 진료기록 목록</h3>
+                <div class="list-content"></div>
+            </div>
+            
+            <div class="panel">
+                <h3>진료기록 상세보기</h3>
+                <div id="soapDetail"></div>
+            </div>
+            
+            <div class="right-column-stack">
+                <div class="order-summary-panel">
+                    <h4>치료기록</h4>
+                    <div id="treatmentSummary"></div>
+                </div>
+                
+                <div class="order-summary-panel">
+                    <h4>검사 오더</h4>
+                    <div id="labOrderSummary"></div>
+                </div>
+                
+                <div class="order-summary-panel">
+                    <h4>처방기록</h4>
+                    <div id="prescriptionSummary"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Treatment Modal -->
+    <!-- Treatment Modal -->
+    <div class="modal-overlay" id="treatmentDetailModal">
+        <div class="modal-content">
+
+            <div class="modal-header">치료기록 상세</div>
+
+            <div class="modal-body treatment-body">
+    처치명: <span id="treat_name"></span><br>
+    코드: <span id="treat_code"></span><br>
+    처치부위: <span id="treat_site"></span><br>
+    시행 시각: <span id="treat_exec"></span><br>
+    완료 시각: <span id="treat_done"></span><br>
+    상태: <span id="treat_status"></span><br>
+    특이사항: <span id="treat_note"></span><br>
+    담당의사: <span id="treat_doctor"></span><br>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="closeModal('treatmentDetailModal')">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lab Modal -->
+    <div class="modal-overlay" id="labDetailModal">
+        <div class="modal-content">
+
+            <div class="modal-header">검사오더 상세</div>
+
+            <div class="modal-body lab-body">
+    검사 항목명: <span id="lab_name"></span><br>
+    코드: <span id="lab_code"></span><br>
+    검체: <span id="lab_specimen"></span><br>
+    오더 시각: <span id="lab_order_dt"></span><br>
+    상태: <span id="lab_status"></span><br>
+    상태 변경 시각: <span id="lab_status_dt"></span><br>
+    응급 여부: <span id="lab_emergency"></span><br>
+    특이사항: <span id="lab_note"></span><br>
+    담당의사: <span id="lab_doctor"></span><br>
+    <div class="lab-attachments">
+        첨부파일:
+        <ul id="lab_attachments"></ul>
+    </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="closeModal('labDetailModal')">닫기</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Prescription Modal -->
+    <div class="modal-overlay" id="prescriptionDetailModal">
+        <div class="modal-content">
+
+            <div class="modal-header">처방기록 상세</div>
+
+            <div class="modal-body prescription-body">
+                처방명: <span id="drug_name"></span><br>
+                코드: <span id="drug_code"></span><br>
+                오더시각: <span id="drug_order_dt"></span><br>
+                용량: <span id="drug_dose"></span><br>
+                횟수: <span id="drug_freq"></span><br>
+                투약시작: <span id="drug_start_dt"></span><br>
+                투약종료: <span id="drug_end_dt"></span><br>
+                상태: <span id="drug_status"></span><br>
+                특이사항: <span id="drug_note"></span><br>
+                담당의사: <span id="drug_doctor"></span><br>
+            </div>
+
+
+            <div class="modal-footer">
+                <button onclick="closeModal('prescriptionDetailModal')">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'emr/js/view_previous_medical_records.js' %}"></script>
+</body>
+</html>
+ 

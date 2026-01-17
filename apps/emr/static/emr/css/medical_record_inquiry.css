@@ -1,0 +1,219 @@
+/* CareBridge 통일 카드 스타일 */
+:root {
+  --cb-bg: #ffffff;
+  --cb-card-bg: #ffffff;
+  --cb-border: #e5e7eb; /* 미세 테두리 */
+  --cb-radius: 12px;    /* 필요 시 16px로 조정 가능 */
+  --cb-text: #111827;
+  --cb-muted: #6b7280;
+  --cb-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+  --cb-primary: #2563eb;
+}
+
+body {
+  margin: 0;
+  background: var(--cb-bg);
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  color: var(--cb-text);
+}
+
+.container {
+  max-width: 1500px;
+  margin: 24px auto;
+  padding: 0 24px 24px;
+}
+
+h2 {
+  margin: 0 0 16px 0;
+  color: var(--cb-text);
+  border-bottom: 1px solid var(--cb-border);
+  padding-bottom: 10px;
+}
+
+/* 공통 카드 */
+.cb-card,
+.card {
+  background: var(--cb-card-bg);
+  border: 1px solid var(--cb-border);
+  border-radius: var(--cb-radius);
+  box-shadow: var(--cb-shadow);
+}
+
+.card {
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.card h3 {
+  margin: 0 0 12px 0;
+  color: var(--cb-text);
+  font-size: 16px;
+  border-bottom: 1px dashed var(--cb-border);
+  padding-bottom: 8px;
+}
+
+/* 환자 정보 */
+.patient-detail-card {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 20px;
+  font-size: 14px;
+}
+
+.patient-detail-card div {
+  padding: 8px 0;
+  border-bottom: 1px dotted var(--cb-border);
+}
+
+.patient-detail-card strong {
+  display: inline-block;
+  min-width: 90px;
+  color: var(--cb-muted);
+  font-weight: 800;
+}
+
+/* 방문 기록 */
+.visit-box-grid {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.visit-column {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 240px;
+}
+
+.visit-box-wrapper {
+  border: 1px solid var(--cb-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.visit-box-header {
+  padding: 10px 12px;
+  background: #f9fafb;
+  font-weight: 900;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  border-bottom: 1px solid var(--cb-border);
+}
+
+.visit-box-header:hover {
+  background: #f3f4f6;
+}
+
+.toggle-icon {
+  font-size: 12px;
+  transition: 0.2s;
+  color: var(--cb-muted);
+}
+
+.visit-box-header[aria-expanded="true"] .toggle-icon,
+.level-2-item[aria-expanded="true"] .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Level 2 */
+.level-2-item {
+  padding: 10px 12px;
+  border-bottom: 1px dotted var(--cb-border);
+  cursor: pointer;
+  background: #ffffff;
+  color: var(--cb-primary);
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.level-2-item:hover {
+  background: #f8fafc;
+}
+
+/* Level 3 */
+.level-3-detail {
+  padding: 8px 12px 8px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--cb-text);
+}
+
+.level-3-detail.selected,
+.level-3-detail:hover {
+  background: #eef2ff;
+  font-weight: 800;
+}
+
+
+/* 상세 정보 카드(기본 숨김, JS가 display 변경) */
+#detailView {
+  margin-top: 16px;
+  padding: 16px;
+  border-left: 4px solid #16a34a;
+  background: #ffffff;
+}
+
+#detailView h4 {
+  margin: 0 0 10px 0;
+  color: var(--cb-text);
+  border-bottom: 1px dashed var(--cb-border);
+  padding-bottom: 8px;
+}
+
+.detail-item {
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.detail-item strong {
+  width: 120px;
+  display: inline-block;
+  color: var(--cb-muted);
+  font-weight: 900;
+}
+
+.attachment-list {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.attachment-list li {
+  margin: 4px 0;
+}
+
+.attachment-list a {
+  color: var(--cb-primary);
+  text-decoration: none;
+}
+
+.attachment-list a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1200px) {
+  .patient-detail-card {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .visit-box-grid {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px 24px;
+  }
+  .patient-detail-card {
+    grid-template-columns: 1fr;
+  }
+  .visit-column {
+    min-width: 100%;
+  }
+}
+

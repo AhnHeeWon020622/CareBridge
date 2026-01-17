@@ -1,0 +1,195 @@
+/* === 공통 === */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "맑은 고딕", sans-serif;
+    background: #f7f9fb;
+}
+
+/* 전체 레이아웃 */
+.confirm-layout {
+    max-width: 960px;
+    margin: 40px auto 60px;
+    padding: 0 16px;
+}
+
+/* 1. 상단: 과/의사 정보 영역 */
+.confirm-header {
+    background: linear-gradient(180deg, #4a90e2, #5aa1ec);
+    color: #ffffff;
+    padding: 20px 28px;
+    border-radius: 10px 10px 0 0;
+}
+
+.confirm-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.confirm-subinfo {
+    font-size: 14px;
+    opacity: 0.95;
+}
+
+/* 2. 안내 박스 (연한 블루) */
+.confirm-notice {
+    background: linear-gradient(180deg, #6bb4ff, #5fa8f7);
+    color: #ffffff;
+    padding: 18px 28px;
+    border-radius: 0 0 10px 10px;
+    margin-bottom: 28px;
+}
+
+.confirm-notice h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.confirm-notice ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* 3. 증상 입력 영역 */
+.confirm-form {
+    background: #ffffff;
+    border: 1px solid #d3dce6;
+    padding: 24px 28px 32px;
+    border-radius: 10px;
+}
+
+.confirm-label {
+    margin: 0 0 10px;
+    font-size: 14px;
+}
+
+.confirm-label .optional {
+    font-size: 12px;
+    color: #8a8a8a;
+    margin-left: 4px;
+}
+
+/* 증상 입력 텍스트박스 */
+.symptom-textarea {
+    width: 100%;
+    min-height: 180px;
+    resize: vertical;
+    border: 1px solid #a0a7b3;
+    padding: 12px 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    background: #fafafa;
+}
+
+/* 버튼 영역 */
+.confirm-button-wrap {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-confirm {
+    min-width: 200px;
+    padding: 12px 30px;
+    border: 2px solid #3c3c3c;
+    background: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.2s ease;
+}
+
+.btn-confirm:hover {
+    background: #f3f3f3;
+    border-color: #000;
+}
+
+/* =========================
+   Sticky Footer (최종본)
+   ========================= */
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* body를 flex 컨테이너로 */
+.reservation-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 헤더가 flex 아이템으로 들어가므로 flex-shrink: 0 설정 */
+.reservation-body > .header {
+  flex-shrink: 0;
+}
+
+/* 실제 콘텐츠 영역 */
+.reservation-main {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+/* =========================
+   Footer (페이지 전용)
+   ========================= */
+
+/* Footer 기본 스타일 (먼저 정의) */
+.footer {
+  width: 100%;
+  background: #2a2a2a;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* 핵심: footer를 하단에 고정 (나중에 정의하여 우선순위 높임) */
+.reservation-body .footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* footer 내부 컨테이너 */
+.footer-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 24px 30px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.footer-brand-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 18px;
+}
+
+.footer-info-line {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #c7c7c7;
+}
+
+.footer-copyright {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #444;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .footer-container {
+    padding: 32px 16px 24px;
+  }
+
+  .footer-brand-name {
+    font-size: 20px;
+  }
+}

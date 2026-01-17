@@ -1,0 +1,291 @@
+/* ===========================
+   HEADER 기본 스타일
+   =========================== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #ffffff;
+  border-bottom: 1px solid #e1e4ec;
+  display: flex;
+  justify-content: center;
+}
+
+.header-inner {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 16px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* -------- 로고 -------- */
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1B3C73;
+  text-decoration: none;
+  position: relative;
+  z-index: 1; /* 탭 메뉴보다 낮은 z-index */
+  align-items: flex-start; /* 로고를 위쪽 정렬 */
+  padding-top: 0; /* 상단 패딩 제거 */
+}
+
+/* 로고 링크 클릭 영역 제한 */
+.logo a {
+  display: inline-block;
+  line-height: 0; /* 이미지 하단 여백 제거 */
+  position: relative;
+  z-index: 1;
+  width: auto; /* 이미지 크기에 맞춤 */
+  height: auto; /* 이미지 크기에 맞춤 */
+  overflow: visible; /* 잘림 방지 */
+  max-width: 150px; /* 로고 이미지 최대 너비에 맞춤 (200px → 150px) */
+  vertical-align: top; /* 위쪽 정렬 */
+}
+
+.logo small {
+  font-size: 13px;
+  font-weight: 400;
+  color: #777;
+  margin-left: 4px;
+}
+
+/* ===========================
+   NAV + 로그인
+   =========================== */
+.nav-wrapper {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
+}
+
+.nav {
+  display: flex;
+  gap: clamp(14px, 3vw, 40px);
+}
+
+.nav a {
+  font-size: 16px;
+  text-decoration: none;
+  color: #222;
+
+  /* news-card 와 동일 느낌 적용 */
+  padding: 8px 14px;
+  border-radius: 10px;
+
+  transition: .2s;
+}
+
+/* 활성 메뉴 */
+.nav a.active {
+  color: #1B3C73;
+  border-bottom: 2px solid #1B3C73;
+}
+
+.util {
+  font-size: 13px;
+  color: #555;
+  white-space: nowrap;
+}
+
+.util a {
+  text-decoration: none;
+  color: #555;
+  margin-left: 10px;
+}
+
+.util a:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   햄버거 버튼
+   =========================== */
+.menu-toggle {
+  display: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin: 5px 0;
+  background: #333;
+  transition: 0.2s;
+}
+
+/* ===========================
+   반응형
+   =========================== */
+
+/* 1024px 이하: 메뉴 간격 축소 */
+@media (max-width: 1024px) and (min-width: 901px) {
+  .nav-wrapper {
+    gap: 24px;
+  }
+  .nav {
+    gap: 24px;
+  }
+}
+
+/* ---------- 768px 이하: 햄버거 메뉴 ---------- */
+@media (max-width: 900px) {
+
+  .header-inner {
+    height: auto;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .logo {
+    flex: 0 0 auto; /* flex 축소 방지, 자동 크기 */
+    max-width: 150px; /* 최대 너비 제한 (200px → 150px) */
+    overflow: visible; /* 잘림 방지 (hidden → visible) */
+    align-items: flex-start; /* 위쪽 정렬 */
+    padding-top: 0; /* 상단 패딩 제거 */
+  }
+  
+  /* 모바일에서 로고 링크 클릭 영역 제한 */
+  .logo a {
+    max-width: 150px; /* 로고 이미지 최대 너비에 맞춤 (200px → 150px) */
+    overflow: visible; /* 잘림 방지 (hidden → visible) */
+    vertical-align: top; /* 위쪽 정렬 */
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  /* 기본: 닫힌 상태 -> 메뉴 숨김 */
+  .nav-wrapper {
+    display: none;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 80px;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    padding: 10px 16px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  /* 메뉴 열림 */
+  .header.menu-open .nav-wrapper {
+    display: flex;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .nav a {
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  .nav a:hover {
+    background: #E9F1FF;
+    transform: translateY(-2px);
+  }
+
+  /* 모바일에서 util 영역 스타일 개선 */
+  .util {
+    margin-top: 0;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* 모바일에서 인사말과 구분자 숨김 - 마이페이지와 로그아웃만 표시 */
+  .util .greeting,
+  .util .separator {
+    display: none;
+  }
+
+  /* 모바일에서 util 내부 요소 스타일 - .nav a와 동일하게 정렬 */
+  .util a {
+    margin-left: 0;
+    display: block;
+    padding: 10px 14px;
+    font-size: 15px;
+    color: #222;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: .2s;
+  }
+
+  /* 마이페이지 링크 hover 효과 - .nav a와 동일 */
+  .util a:hover {
+    background: #E9F1FF;
+    transform: translateY(-2px);
+  }
+
+  /* 로그아웃 버튼 스타일 - .nav a와 동일하게 정렬 */
+  .util form {
+    display: block;
+    margin: 0;
+    width: 100%;
+  }
+
+  .util button {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 15px;
+    color: #222;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 10px;
+    transition: .2s;
+  }
+
+  /* 로그아웃 버튼 hover 효과 - .nav a와 동일 */
+  .util button:hover {
+    background: #E9F1FF;
+    transform: translateY(-2px);
+  }
+}
+
+/* ---------- 480px 이하: 더 작은 화면 ---------- */
+@media (max-width: 480px) {
+  .header-inner {
+    padding: 8px 12px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .logo small {
+    display: block;
+    margin-top: 2px;
+  }
+
+  .nav a {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,71 @@
+{% load static %}
+{% load status_filters %}
+
+<div id="detail-modal" class="modal-overlay hidden">
+  <div class="modal-wrap detail-large">
+
+    <button class="modal-close" onclick="closeDetailModal()">×</button>
+
+    <!-- Header: 병원명 + 주소 + 즐겨찾기 -->
+    <div class="detail-header">
+      <div class="detail-header-top">
+        <div class="detail-title-wrapper">
+          <h1 id="detail-title" class="detail-title"></h1>
+          <div id="detail-favorite" class="detail-favorite" data-er-id="">★</div>
+        </div>
+      </div>
+      <p id="detail-address" class="detail-address"></p>
+      <div id="detail-tags" class="tag-row"></div>
+    </div>
+
+    <!-- Message Banner: ErMessage 표시 -->
+    <div id="detail-banner" class="message-banner hidden"></div>
+
+    <!-- 병상 현황: 가로 1열 원형 그래프 -->
+    <h3 class="section-title">병상 현황</h3>
+    <div class="detail-status-grid">
+      <div class="status-item">
+        <div class="status-item-label">응급실 일반</div>
+        <div id="status-circle-er" class="status-circle-container"></div>
+      </div>
+
+      <div class="status-item">
+        <div class="status-item-label">응급실 소아</div>
+        <div id="status-circle-child" class="status-circle-container"></div>
+      </div>
+
+      <div class="status-item">
+        <div class="status-item-label">분만실</div>
+        <div id="status-circle-birth" class="status-circle-container"></div>
+      </div>
+
+      <div class="status-item">
+        <div class="status-item-label">음압격리</div>
+        <div id="status-circle-negative" class="status-circle-container"></div>
+      </div>
+
+      <div class="status-item">
+        <div class="status-item-label">일반격리</div>
+        <div id="status-circle-isolation" class="status-circle-container"></div>
+      </div>
+
+      <div class="status-item">
+        <div class="status-item-label">코호트격리</div>
+        <div id="status-circle-cohort" class="status-circle-container"></div>
+      </div>
+    </div>
+
+    <!-- 하단: 위치 / 길찾기 -->
+    <div class="detail-bottom">
+
+      <!-- 위치 / 길찾기 -->
+      <div class="detail-box">
+        <h3 class="detail-box-title">위치 / 길찾기</h3>
+        <div id="detail-map" class="detail-map">지도 로딩중...</div>
+        <button id="detail-navigation-btn" class="btn primary navigation-btn">길찾기</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>

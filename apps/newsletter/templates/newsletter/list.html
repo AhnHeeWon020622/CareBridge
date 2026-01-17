@@ -1,0 +1,87 @@
+{% load static %}
+{% load tz %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <link rel="icon" href="{% static 'core/img/favicon.png' %}" type="image/png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>메디컬 뉴스레터</title> 
+  <link rel="stylesheet" href="{% static 'newsletter/css/newsletter.css' %}">
+  <link rel="stylesheet" href="{% static 'core/css/footer.css' %}">
+</head>
+<body class="has-footer">
+  {% include "core/_header.html" %}
+
+  <main class="newsletter-page">
+    <div class="newsletter-wrapper">
+      <h1 class="newsletter-title">메디컬 뉴스레터</h1>
+
+      {% if items %}
+        <p class="newsletter-updated">
+          최근 업데이트 · {{ items.0.updated_at|date:"Y-m-d H:i" }}
+        </p>
+      {% else %}
+        <p class="newsletter-updated">
+          최근 업데이트 · 정보 없음
+        </p>
+      {% endif %}
+
+
+      {% if items %}
+        <div class="news-list">
+          {% for item in items %}
+            <a
+              href="{{ item.url }}"
+              target="_blank"
+              class="news-card-link"
+            >
+              <article class="news-card">
+
+             <!-- 왼쪽 이미지 영역 -->
+               <div class="news-thumb">
+                 <img 
+                   src="{{ item.image_url|default:'/static/newsletter/img/default.jpg' }}" 
+                   alt="thumbnail"
+                 >
+               </div>
+             
+               <!-- 오른쪽 텍스트 영역 -->
+               <div class="news-content">
+                 <div class="news-card-header">
+                   <span class="news-badge">
+                     {{ item.category|default:"보도자료" }}
+                   </span>
+                   <span class="news-date">
+                     {{ item.published_at|date:"Y.m.d" }}
+                   </span>
+                 </div>
+               
+                 <h2 class="news-title">
+                   {{ item.title }}
+                 </h2>
+               
+                 <p class="news-body">
+                   {% if item.body %}
+                     {{ item.body|truncatechars:150 }}
+                   {% else %}
+                     {{ item.summary|truncatechars:150 }}
+                   {% endif %}
+                 </p>
+               </div>
+             
+             </article>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="news-empty">
+          뉴스가 없습니다. 관리자 페이지에서 데이터를 수집해 주세요.
+        </p>
+      {% endif %}
+    </div>
+  </main>
+  
+  {% include "core/footer.html" %}
+</body>
+</html>

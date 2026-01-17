@@ -1,0 +1,70 @@
+/* 예약 목록 테이블 스타일 */
+.reservation-table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.reservation-table th,
+.reservation-table td {
+    border-bottom: 1px solid #eee;
+    padding: 10px 8px;
+    text-align: left;
+}
+
+.reservation-table th {
+    background: #f8f8f8;
+    text-align: center;
+}
+
+.reservation-table td:nth-child(1),
+.reservation-table td:nth-child(6) {
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #4b6cff;
+    background: #4b6cff;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-cancel.disabled {
+    background: #ccc;
+    border-color: #ccc;
+    cursor: default;
+}
+
+/* 모바일 반응형 - 테이블 가로 스크롤 */
+@media (max-width: 768px) {
+    .reservation-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .reservation-table {
+        min-width: 600px;
+    }
+
+    .reservation-table th,
+    .reservation-table td {
+        white-space: nowrap;
+        padding: 10px 12px;
+    }
+
+    /* 병원정보 셀만 줄바꿈 허용 */
+    .reservation-table td:nth-child(3) {
+        white-space: normal;
+        min-width: 120px;
+    }
+}

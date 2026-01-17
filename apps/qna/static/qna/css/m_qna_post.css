@@ -1,0 +1,369 @@
+/*
+  ========= QnA 상세보기 페이지 전용 CSS =========
+
+  목적: QnA 상세보기 페이지(m_qna_post.html)에만 적용되는 전용 CSS 스타일 정의
+    - 사용자 경험(UX) 개선: QnA 상세보기 페이지에 특화된 UI 제공
+    - 공통 스타일 확장: m_qna_common.css의 공통 스타일을 확장하여 페이지별 특수 스타일 추가
+    - 반응형 디자인: 모바일, 태블릿, PC 화면에 대응하는 반응형 레이아웃
+    - 관리자 패널 qna_detail.css 스타일 참고
+
+  주요 기능:
+    - QnA 상세보기 헤더: 페이지 제목 및 액션 버튼 영역
+    - QnA 게시글: 문의 내용 및 답변 표시
+    - 상태 표시: 답변 완료/대기 상태 표시
+
+  관련 파일:
+    - HTML: m_qna_post.html
+    - JavaScript: m_qna_post.js
+    - 공통 CSS: m_qna_common.css
+    - 참고: apps/admin_panel/static/admin_panel/css/qna_detail.css
+*/
+
+/* 공통 CSS는 m_qna_common.css를 참조하세요 */
+
+/*
+  ========= 페이지 제목 =========
+
+  목적: Q&A 상세 페이지의 메인 제목
+*/
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 16px 0;
+  padding: 0;
+}
+
+.title-divider {
+  border: none;
+  border-top: 1px solid #E0E0E0;
+  margin: 0 0 20px 0;
+}
+
+.info-content-divider {
+  border: none;
+  border-top: 1px solid #E0E0E0;
+  margin: 20px 0;
+}
+
+/*
+  ========= QnA 헤더 영역 =========
+
+  목적: 완료 배지와 제목, 액션 버튼 영역
+*/
+
+.qna-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.qna-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+/* 완료 배지 버튼 스타일 */
+.btn-complete-badge {
+  padding: 6px 16px;
+  background-color: #10B981;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+.qna-post-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  flex: 1;
+}
+
+.qna-header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/*
+  ========= 버튼 스타일 =========
+
+  목적: QnA 상세보기 페이지의 액션 버튼 스타일
+*/
+
+.btn-list,
+.btn-delete {
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 1px solid #bfc6d4;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  transition: 0.2s ease;
+  color: #000;
+}
+
+
+
+.btn-list:hover {
+  background-color: #dfe6f3;
+}
+
+
+
+.btn-delete:hover {
+  background-color: #dfe6f3;
+}
+
+/*
+  ========= 문의 상세 정보 =========
+
+  목적: 문의 상세 정보를 간단하게 표시하는 스타일
+*/
+
+.inquiry-info {
+  margin-bottom: 20px;
+}
+
+/* 등록자와 등록일을 한 행에 배치 */
+.inquiry-info-row {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 8px;
+}
+
+.inquiry-info-item {
+  font-size: 14px;
+  color: #000;
+  line-height: 1.6;
+}
+
+.inquiry-info-label {
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.inquiry-info-value {
+  color: #333;
+}
+
+/*
+  ========= 문의 내용 박스 =========
+
+  목적: 문의 내용을 표시하는 박스 스타일
+*/
+
+.inquiry-content-box {
+  background-color: #fff;
+  padding: 0 24px 24px 24px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #333;
+  border: none;
+  margin: 0;
+  min-height: auto;
+  text-align: left;
+  text-indent: 0;
+}
+
+/*
+  ========= 답변 섹션 =========
+
+  목적: 답변 내용을 섹션 단위로 구조화하여 표시
+*/
+
+.reply-section {
+  background-color: #fff;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+/* 답변 헤더 영역 */
+.reply-header {
+  padding: 20px 24px 16px 24px;
+  background-color: #DFE8F2;
+}
+
+.reply-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 8px 0;
+  padding: 0;
+}
+
+.reply-date-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reply-date {
+  font-size: 14px;
+  color: #000;
+}
+
+.reply-date-value {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 답변 내용 박스 */
+.reply-content-box {
+  background-color: #fff;
+  padding: 0 24px 24px 24px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #333;
+  border: none;
+  margin: 0;
+  min-height: auto;
+  text-align: left;
+  text-indent: 0;
+}
+
+.reply-section-pending {
+  background-color: #FEF3C7;
+}
+
+.reply-content-pending {
+  text-align: center;
+  color: #92400E;
+  padding: 20px;
+}
+
+.reply-content-pending p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/*
+  ========= 상태 배지 =========
+
+  목적: 답변 완료/대기 상태를 표시하는 배지 스타일
+*/
+
+.qna-replied {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #10B981;
+  color: #fff;
+  display: inline-block;
+}
+
+.qna-pending {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #F59E0B;
+  color: #fff;
+  display: inline-block;
+}
+
+/*
+  ========= 반응형 디자인 =========
+
+  목적: 화면 크기에 따라 레이아웃과 스타일을 조정하는 미디어 쿼리
+*/
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 24px;
+  }
+
+  .qna-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .qna-header-left {
+    width: 100%;
+  }
+
+  .qna-post-title {
+    font-size: 20px;
+    width: 100%;
+  }
+
+  .qna-header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .btn-list,
+  .btn-delete {
+    width: 100%;
+    text-align: center;
+  }
+
+  .reply-header {
+    padding: 16px;
+  }
+
+  .inquiry-content-box,
+  .reply-content-box {
+    padding: 0 16px 16px 16px;
+    font-size: 13px;
+  }
+
+  .reply-title {
+    font-size: 16px;
+  }
+
+  .inquiry-info-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .inquiry-info-item {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 20px;
+  }
+
+  .qna-post-title {
+    font-size: 18px;
+  }
+
+  .reply-header {
+    padding: 12px;
+  }
+
+  .inquiry-content-box,
+  .reply-content-box {
+    padding: 0 12px 12px 12px;
+    font-size: 12px;
+  }
+
+  .reply-title {
+    font-size: 14px;
+  }
+
+  .inquiry-info-item {
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,190 @@
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #ffffff; /* 흰 배경 */
+      color: #111827;
+    }
+    
+    /* 이 페이지 전체 레이아웃 */
+    .newsletter-page {
+      display: flex;
+      justify-content: center;
+      padding: 32px 24px;
+      padding-bottom: 120px;
+    }
+    
+    /* 기존 코드 그대로 사용 */
+    .newsletter-wrapper {
+      max-width: 1320px; /* 헤더와 동일한 너비로 변경 */
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    .newsletter-title {
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 26px;
+      color: #1f2430;
+    }
+    
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%; /* 전체 너비 사용 */
+    }
+    
+    .news-card-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    /* 흰 카드 + 미세 테두리로 구분 */
+    .news-card {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid #e0e0e0; /* 미세한 테두리 */
+      border-radius: 8px;
+      background: #ffffff; /* 흰색 카드 */
+      align-items: center; /* 이미지와 텍스트를 위아래 기준 가운데 정렬 */
+    }
+    .news-thumb {
+      width: 140px;
+      height: 100px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border-radius: 6px;
+      background: #fafafa; /* 매우 연한 회색 (이미지 영역) */
+    }
+    
+    .news-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .news-content {
+      flex: 1;
+    }
+    /* 호버 시에도 미니멀 유지 (배경색 변화 최소화) */
+    .news-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 더 미세한 그림자 */
+      border-color: #d0d0d0; /* 호버 시 테두리만 약간 진하게 */
+      background: #ffffff; /* 배경색 유지 */
+    }
+
+    .news-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .news-badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: #b45309;
+      background: #fff7ed;
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .news-date {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .news-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      margin: 4px 0 6px;
+    }
+
+    .news-body {
+      font-size: 13px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .news-empty {
+      font-size: 14px;
+      color: #6b7280;
+    }
+.newsletter-updated {
+  margin: 4px 0 20px;
+  font-size: 13px;
+  color: #6b7280;              /* 뉴스 날짜 톤과 동일 */
+}
+
+/* =========================
+   반응형 디자인
+   ========================= */
+
+/* 768px 이하: 모바일 */
+@media (max-width: 768px) {
+  /* 모바일에서 .news-body 숨김 - 사진과 제목만 표시 */
+  .news-body {
+    display: none;
+  }
+  
+  /* 모바일에서 카드 레이아웃 조정 */
+  .news-card {
+    gap: 12px;
+    padding: 12px;
+  }
+  
+  .news-thumb {
+    width: 100px;
+    height: 70px;
+  }
+  
+  .news-title {
+    font-size: 15px;
+    margin: 4px 0 0;
+  }
+  
+  .news-card-header {
+    margin-bottom: 4px;
+  }
+}
+
+/* 480px 이하: 작은 모바일 */
+@media (max-width: 480px) {
+  .newsletter-page {
+    padding: 24px 16px;
+    padding-bottom: 120px;
+  }
+  
+  .newsletter-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .news-card {
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .news-thumb {
+    width: 80px;
+    height: 60px;
+  }
+  
+  .news-title {
+    font-size: 14px;
+  }
+  
+  .news-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+  
+  .news-date {
+    font-size: 11px;
+  }
+}

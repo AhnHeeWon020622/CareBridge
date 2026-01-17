@@ -1,0 +1,976 @@
+<!-- 
+  병원 목록 페이지 템플릿
+  
+  목적: 병원 목록을 표시하고 검색, 정렬, 페이지네이션 기능을 제공하는 관리자 페이지
+    - 사용자 경험(UX) 개선: 관리자가 병원 목록을 확인하고 검색, 정렬, 페이지네이션 기능을 사용할 수 있도록 함
+    - 데이터 관리: 병원 정보를 테이블로 표시하고 상세 정보 확인
+    - 기능 제공: 검색, 정렬, 페이지네이션, 상세 정보 표시
+  
+  주요 기능:
+    - 병원 목록 표시: 전체 병원 목록을 테이블로 표시
+    - 검색 기능: 병원명, 지역, 전화번호, 병원ID로 검색 가능
+    - 정렬 기능: No., 병원명, 병원ID, 전화번호, 주소, 등록일로 정렬 가능
+    - 페이지네이션: 많은 데이터를 페이지 단위로 나누어 표시
+    - 상세 정보 표시: 병원 행 클릭 시 상세 정보를 AJAX로 로드하여 표시
+    - 비밀번호 마스킹: 병원 비밀번호는 마스킹 처리하여 보안 강화
+  
+  관련 파일:
+    - CSS: admin_common.css, hospital_list.css
+    - JavaScript: admin_common.js, hospital_list.js
+    - 상세 정보 템플릿: hospital_list_detail.html (AJAX로 로드)
+-->
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 
+    HTML 문서 메타 정보
+    
+    목적: 문서의 기본 정보 및 설정
+      - charset: UTF-8 인코딩 설정 (한글 지원)
+      - viewport: 반응형 디자인을 위한 뷰포트 설정
+      - title: 브라우저 탭에 표시될 페이지 제목
+  -->
+  <meta charset="UTF-8">
+  <!-- 
+    뷰포트 설정
+    
+    목적: 모바일 기기에서 올바른 화면 크기로 표시되도록 설정
+      - width=device-width: 기기의 실제 너비에 맞춤
+      - initial-scale=1.0: 초기 확대/축소 비율 100%
+      - minimum-scale=0.5: 최소 확대/축소 비율 50%
+      - maximum-scale=2.0: 최대 확대/축소 비율 200%
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0">
+  <title>병원 목록 - CareBridge 관리자</title>
+  <!-- Favicon 설정 -->
+  <link rel="icon" href="{% static 'core/img/favicon.png' %}" type="image/png">
+  
+  <!-- 
+    CSS 파일 로드
+    
+    목적: 페이지 스타일링을 위한 CSS 파일 로드
+      - admin_common.css: 관리자 패널 공통 스타일
+      - hospital_list.css: 병원 목록 페이지 전용 스타일
+  -->
+  <link rel="stylesheet" href="{% static 'admin_panel/css/admin_common.css' %}">
+  <link rel="stylesheet" href="{% static 'admin_panel/css/hospital_list.css' %}">
+</head>
+<body>
+  {% comment %}
+    헤더 섹션
+    
+    목적: 페이지 상단에 로고와 사용자 정보, 로그아웃 버튼을 표시
+      - 로고: CareBridge 로고 이미지 및 대시보드 링크
+      - 사용자 정보: 로그인한 관리자 이름 표시
+      - 로그아웃 버튼: 로그아웃 기능 제공
+      - 공통 헤더 템플릿 사용: core/header.html
+  {% endcomment %}
+  {% include 'core/_header.html' %}
+
+  <!-- 
+    메인 컨테이너
+    
+    목적: 페이지의 주요 내용을 담는 컨테이너
+      - CSS 클래스: container (컨테이너 스타일)
+      - 내용: 탭, 검색 섹션, 목록, 페이지네이션, 상세 정보
+  -->
+  <div class="container">
+    <!-- 
+      상단 탭 메뉴
+      
+      목적: 관리자 패널의 각 페이지로 이동할 수 있는 탭 메뉴
+        - 사용자 경험(UX) 개선: 관리자가 쉽게 다른 페이지로 이동할 수 있도록 함
+        - 현재 페이지 표시: active 클래스로 현재 페이지 표시
+    -->
+    <div class="tabs">
+      <!-- 
+        사용자목록 탭
+        
+        목적: 사용자 목록 페이지로 이동
+          - href: {% url 'user_list' %} - 사용자 목록 URL
+          - CSS 클래스: tab (탭 스타일)
+      -->
+      <a href="{% url 'user_list' %}" class="tab">사용자목록</a>
+      
+      <!-- 
+        의사목록 탭
+        
+        목적: 의사 목록 페이지로 이동
+          - href: {% url 'doctor_list' %} - 의사 목록 URL
+          - CSS 클래스: tab (탭 스타일)
+      -->
+      <a href="{% url 'doctor_list' %}" class="tab">의사목록</a>
+      
+      <!-- 
+        병원정보 탭 (현재 페이지)
+        
+        목적: 병원 정보 페이지로 이동 (현재 페이지)
+          - href: {% url 'hospital_list' %} - 병원 정보 URL
+          - CSS 클래스: tab active (탭 스타일 + 현재 페이지 표시)
+      -->
+      <a href="{% url 'hospital_list' %}" class="tab active">병원정보</a>
+      
+      <!-- 
+        승인대기 탭
+        
+        목적: 승인 대기 페이지로 이동
+          - href: {% url 'approval_pending' %} - 승인 대기 URL
+          - CSS 클래스: tab (탭 스타일)
+      -->
+      <a href="{% url 'approval_pending' %}" class="tab">승인대기</a>
+      
+      <!-- 
+        1:1문의관리 탭
+        
+        목적: 1:1 문의 관리 페이지로 이동
+          - href: {% url 'qna_list' %} - 1:1 문의 목록 URL
+          - CSS 클래스: tab (탭 스타일)
+      -->
+      <a href="{% url 'qna_list' %}" class="tab">1:1문의관리</a>
+    </div>
+
+    <!-- 
+      검색 섹션
+      
+      목적: 병원 검색 기능을 제공하는 섹션
+        - 사용자 경험(UX) 개선: 관리자가 원하는 병원을 쉽게 찾을 수 있도록 검색 기능 제공
+        - 검색 조건: 병원명, 지역, 전화번호, 병원ID로 검색 가능
+    -->
+    <div class="search-section">
+      <!-- 
+        디버깅 정보 (개발 환경용)
+        
+        목적: 검색 결과에 대한 디버깅 정보 표시 (개발 환경에서 유용)
+          - 조건: search_type과 search_keyword가 모두 있을 때만 표시
+          - 표시 정보:
+            → 전체 병원 수: {{ total_hospitals_count }} - 전체 병원 수
+            → 검색 결과 수: {{ search_result_count }} - 검색 조건에 맞는 병원 수
+            → 검색어: "{{ search_keyword }}" - 사용자가 입력한 검색어
+          - 주의: 프로덕션 환경에서는 제거 가능
+      -->
+      {% if search_type and search_keyword %}
+      <div style="margin-bottom: 10px; padding: 8px; background: #f0f0f0; border-radius: 4px; font-size: 12px;">
+        전체 병원: {{ total_hospitals_count }}개 | 검색 결과: {{ search_result_count }}개 | 검색어: "{{ search_keyword }}"
+      </div>
+      {% endif %}
+      
+      <!-- 
+        검색 폼
+        
+        목적: 병원 검색을 위한 폼
+          - method="post": POST 메서드로 검색 파라미터를 전달
+          - action: {% url 'hospital_list' %} - 병원 목록 URL (자기 자신)
+          - CSS 클래스: search-form (검색 폼 스타일)
+      -->
+      <form method="post" action="{% url 'hospital_list' %}" class="search-form">
+        {% csrf_token %}
+        <!-- 
+          검색 조건 선택 드롭다운
+          
+          목적: 검색할 필드를 선택
+            - name="search_type": 서버에서 검색 조건을 읽기 위한 필드 이름
+            - CSS 클래스: search-select (검색 선택 드롭다운 스타일)
+            - 옵션:
+              → value="": 기본값 (검색 조건 미선택)
+              → value="name": 병원명으로 검색
+              → value="region": 지역으로 검색
+              → value="phone": 전화번호로 검색
+              → value="hpid": 병원ID로 검색
+            - selected 속성: 현재 선택된 검색 조건 표시
+        -->
+        <select name="search_type" class="search-select">
+          <option value="">검색조건</option>
+          <option value="name" {% if search_type == 'name' %}selected{% endif %}>병원명</option>
+          <option value="region" {% if search_type == 'region' %}selected{% endif %}>지역</option>
+          <option value="phone" {% if search_type == 'phone' %}selected{% endif %}>전화번호</option>
+          <option value="hpid" {% if search_type == 'hpid' %}selected{% endif %}>병원ID</option>
+        </select>
+        
+        <!-- 
+          검색어 입력 필드
+          
+          목적: 검색할 키워드를 입력
+            - type="text": 텍스트 입력 필드
+            - name="search_keyword": 서버에서 검색어를 읽기 위한 필드 이름
+            - value="{{ search_keyword }}": 이전에 입력한 검색어 유지
+            - placeholder: "검색어를 입력하세요" - 사용자 안내 메시지
+            - CSS 클래스: search-input (검색 입력 필드 스타일)
+        -->
+        <input 
+          type="text" 
+          name="search_keyword" 
+          value="{{ search_keyword }}" 
+          placeholder="검색어를 입력하세요" 
+          class="search-input"
+        >
+        
+        <!-- 
+          검색 버튼
+          
+          목적: 검색 폼을 제출하여 검색 실행
+            - type="submit": 폼 제출 버튼
+            - CSS 클래스: search-btn (검색 버튼 스타일)
+            - 아이콘: 🔍 (검색 아이콘)
+        -->
+        <button type="submit" class="search-btn">
+          <span class="search-icon">🔍</span>
+        </button>
+        
+        <!-- 
+          병원추가 버튼
+          
+          목적: 병원 추가 모달을 여는 버튼
+            - type="button": 폼 제출 방지
+            - CSS 클래스: add-hospital-btn (병원추가 버튼 스타일)
+            - 아이콘: ➕ (추가 아이콘)
+            - data-modal-target: 모달 ID 지정
+        -->
+        <button type="button" class="add-hospital-btn" id="openAddHospitalModal">
+          <span class="add-icon">➕</span>
+          <span class="add-text">병원추가</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- 
+      병원 목록 테이블 섹션
+      
+      목적: 병원 목록을 테이블로 표시하고 정렬 기능 제공
+        - 사용자 경험(UX) 개선: 병원 정보를 테이블로 표시하여 가독성 향상
+        - 정렬 기능: 대부분의 컬럼에 정렬 기능 제공
+        - 행 클릭: 병원 행 클릭 시 상세 정보를 AJAX로 로드
+    -->
+    <div class="table-container">
+      <!-- 
+        병원 목록 테이블
+        
+        목적: 병원 목록을 테이블로 표시
+          - CSS 클래스: user-table (테이블 스타일)
+          - 구조: thead (헤더), tbody (본문)
+      -->
+      <table class="user-table">
+        <!-- 
+          테이블 헤더
+          
+          목적: 테이블의 컬럼 제목 표시
+            - 정렬 기능: 대부분의 컬럼에 정렬 기능 제공
+            - 정렬 방향 표시: 현재 정렬 필드에 화살표 표시 (↑ 또는 ↓)
+        -->
+        <thead>
+          <tr>
+            <!-- 
+              No. 컬럼 (정렬 가능)
+              
+              목적: 병원 번호를 표시하고 정렬 기능 제공
+                - data-sort-field="hos_id": 정렬 필드 이름
+                - data-current-sort: 현재 정렬 필드 (뷰에서 전달)
+                - data-current-order: 현재 정렬 방향 (뷰에서 전달)
+                - 정렬 방향 표시: 현재 정렬 필드가 'hos_id'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="hos_id" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                No.
+                {% if sort_field == 'hos_id' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              병원명 컬럼 (정렬 가능)
+              
+              목적: 병원명을 표시하고 정렬 기능 제공
+                - data-sort-field="name": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'name'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="name" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                병원명
+                {% if sort_field == 'name' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              병원ID 컬럼 (정렬 가능)
+              
+              목적: 병원 ID를 표시하고 정렬 기능 제공
+                - data-sort-field="hos_name": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'hos_name'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="hos_name" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                병원ID
+                {% if sort_field == 'hos_name' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              전화번호 컬럼 (정렬 가능)
+              
+              목적: 병원 전화번호를 표시하고 정렬 기능 제공
+                - data-sort-field="tel": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'tel'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="tel" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                전화번호
+                {% if sort_field == 'tel' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              주소 컬럼 (정렬 가능)
+              
+              목적: 병원 주소를 표시하고 정렬 기능 제공
+                - data-sort-field="address": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'address'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="address" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                주소
+                {% if sort_field == 'address' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              의사 수 컬럼 (정렬 가능)
+              
+              목적: 병원에 소속된 의사 수를 표시하고 정렬 기능 제공
+                - data-sort-field="doctor_count": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'doctor_count'이면 화살표 표시
+                - 데이터: 여러 필드를 확인하여 표시 (doctor_count > dr_total > 0)
+            -->
+            <th>
+              <a href="#" data-sort-field="doctor_count" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                의사 수
+                {% if sort_field == 'doctor_count' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              등록일 컬럼 (정렬 가능)
+              
+              목적: 병원 등록일을 표시하고 정렬 기능 제공
+                - data-sort-field="created_at": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'created_at'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="created_at" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                등록일
+                {% if sort_field == 'created_at' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              개원일 컬럼 (정렬 가능)
+              
+              목적: 병원 개원일을 표시하고 정렬 기능 제공
+                - data-sort-field="estb_date": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'estb_date'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="estb_date" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                개원일
+                {% if sort_field == 'estb_date' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+          </tr>
+        </thead>
+        
+        <!-- 
+          테이블 본문
+          
+          목적: 병원 목록을 테이블 행으로 표시
+            - 반복문: hospitals_with_number 리스트를 순회하며 각 병원 정보를 행으로 표시
+            - 데이터 표시: 병원의 각 정보 필드를 테이블 셀로 표시
+            - 행 클릭: 행 클릭 시 상세 정보를 AJAX로 로드
+        -->
+        <tbody>
+          <!-- 
+            병원 목록 반복문
+            
+            목적: 병원 목록을 순회하며 테이블 행 생성
+              - hospitals_with_number: 뷰에서 전달된 병원 목록 (번호 포함)
+                → 각 항목은 dict 형태: {'hospital': Hospitals 객체, 'number': int}
+              - item: 현재 순회 중인 항목
+                → item.hospital: 병원 객체 (Hospitals 모델 인스턴스)
+                → item.number: 목록 번호 (페이지네이션 고려)
+          -->
+          {% for item in hospitals_with_number %}
+            <!-- 
+              병원 정보 행
+              
+              목적: 병원의 정보를 테이블 행으로 표시
+                - data-hospital-id: 병원 ID (JavaScript에서 행 클릭 이벤트 처리에 사용)
+                - CSS 클래스: user-row (사용자 행 스타일)
+                - item.hospital: 병원 객체 (Hospitals 모델 인스턴스)
+            -->
+            <tr data-hospital-id="{{ item.hospital.hos_id }}" class="hospital-row">
+              <!-- 
+                번호 셀
+                
+                목적: 목록 번호 표시 (페이지네이션 고려)
+                  - {{ item.number }}: 페이지네이션을 고려한 순번
+              -->
+              <td>{{ item.number }}</td>
+              
+              <!-- 
+                병원명 셀
+                
+                목적: 병원명 표시
+                  - {{ item.hospital.name }}: 병원명
+              -->
+              <td>{{ item.hospital.name }}</td>
+              
+              <!-- 
+                병원ID 셀
+                
+                목적: 병원 ID 표시
+                  - {{ item.hospital.hos_name|default:"-" }}: 병원 ID
+                  - |default:"-": hos_name이 없으면 "-" 표시
+              -->
+              <td>{{ item.hospital.hos_name|default:"-" }}</td>
+              
+              <!-- 
+                전화번호 셀
+                
+                목적: 병원 전화번호 표시
+                  - {{ item.hospital.tel|default:"-" }}: 병원 전화번호
+                  - |default:"-": tel이 없으면 "-" 표시
+              -->
+              <td>{{ item.hospital.tel|default:"-" }}</td>
+              
+              <!-- 
+                주소 셀 (목록용: 첫 번째 쉼표까지만 표시)
+                
+                목적: 병원 주소 표시 (목록에서는 첫 번째 쉼표까지만 표시)
+                  - 목록에서는 주소의 첫 번째 쉼표까지만 표시하여 간결하게 표시
+                  - 상세 정보에서는 전체 주소가 표시됨
+                  - 뷰에서 처리한 address_short 사용
+                  - 예: "세종특별자치시 한누리대로 331, 2층, 3층" → "세종특별자치시 한누리대로 331"
+              -->
+              <td>{{ item.address_short|default:"-" }}</td>
+              
+              <!-- 
+                의사 수 셀
+                
+                목적: 병원에 소속된 의사 수 표시
+                  - 여러 필드를 확인하여 표시 (doctor_count > dr_total > 0)
+                  - {{ item.hospital.doctor_count }}: 의사 수 필드 1 (우선)
+                  - {{ item.hospital.dr_total }}: 의사 수 필드 2 (대체)
+                  - 기본값: 0명 (두 필드 모두 없으면)
+              -->
+              <td>
+                {% if item.hospital.doctor_count %}
+                  {{ item.hospital.doctor_count }}명
+                {% elif item.hospital.dr_total %}
+                  {{ item.hospital.dr_total }}명
+                {% else %}
+                  0명
+                {% endif %}
+              </td>
+              
+              <!-- 
+                등록일 셀
+                
+                목적: 병원 등록일 표시 (yyyy.mm.dd 형식)
+                  - {{ item.created_at_formatted|default:"-" }}: 병원 등록일 (yyyy.mm.dd 형식)
+                  - |default:"-": created_at이 없으면 "-" 표시
+              -->
+              <td>{{ item.created_at_formatted|default:"-" }}</td>
+              
+              <!-- 
+                개원일 셀
+                
+                목적: 병원 개원일 표시 (yyyy.mm.dd 형식)
+                  - {{ item.estb_date_formatted|default:"-" }}: 병원 개원일 (yyyy.mm.dd 형식)
+                  - |default:"-": estb_date가 없으면 "-" 표시
+              -->
+              <td>{{ item.estb_date_formatted|default:"-" }}</td>
+            </tr>
+          {% empty %}
+            <!-- 
+              빈 목록 처리
+              
+              목적: 병원 데이터가 없을 때 메시지 표시
+                - empty: 반복문에서 반복할 항목이 없을 때 실행
+                - colspan="8": 8개 컬럼을 병합하여 메시지 표시
+                - CSS 클래스: no-data (데이터 없음 메시지 스타일)
+            -->
+            <tr>
+              <td colspan="7" class="no-data">병원 데이터가 없습니다.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 
+      페이지네이션 섹션
+      
+      목적: 많은 데이터를 페이지 단위로 나누어 표시하고 페이지 이동 기능 제공
+        - 사용자 경험(UX) 개선: 많은 데이터를 페이지 단위로 나누어 가독성 향상
+        - 파라미터 유지: 정렬 필드, 정렬 방향, 검색 조건, 검색어를 URL 파라미터로 유지
+        - AJAX 처리: JavaScript에서 AJAX로 페이지네이션 처리하여 페이지 새로고침 없이 목록 업데이트
+      
+      주요 기능:
+        - 첫 페이지로 이동: « 버튼
+        - 이전 페이지로 이동: < 버튼
+        - 페이지 번호 표시: 현재 페이지 ±3 범위의 페이지 번호 표시 (현재 페이지가 1일 때는 4까지 표시)
+        - 다음 페이지로 이동: > 버튼
+        - 마지막 페이지로 이동: » 버튼
+      
+      조건부 표시:
+        - 전체 페이지가 1개일 때는 페이지네이션 버튼을 표시하지 않음
+    -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+      <!-- 
+        이전 페이지 버튼 영역
+        
+        목적: 첫 페이지로 이동 및 이전 페이지로 이동 버튼 표시
+          - page_obj.has_previous: 이전 페이지가 있는지 확인
+          - 이전 페이지가 있으면 링크 버튼 표시
+          - 이전 페이지가 없으면 비활성화된 버튼 표시
+      -->
+      {% if page_obj.has_previous %}
+        <!-- 
+          첫 페이지로 이동 링크
+          
+          목적: 첫 페이지(1페이지)로 이동
+            - href: ?page=1 + 정렬 파라미터 + 검색 파라미터
+            - CSS 클래스: page-link (페이지 링크 스타일)
+            - 텍스트: « (첫 페이지 기호)
+        -->
+        <a href="#" class="page-link" data-page="1" data-sort="{{ sort_field|default:'' }}" data-order="{{ sort_order|default:'' }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">«</a>
+        
+        <!-- 
+          이전 페이지로 이동 링크
+          
+          목적: 현재 페이지의 이전 페이지로 이동
+            - href: # (JavaScript로 처리)
+            - data-page: 이전 페이지 번호
+            - page_obj.previous_page_number: 이전 페이지 번호
+            - CSS 클래스: page-link (페이지 링크 스타일)
+            - 텍스트: < (이전 페이지 기호)
+        -->
+        <a href="#" class="page-link" data-page="{{ page_obj.previous_page_number }}" data-sort="{{ sort_field|default:'' }}" data-order="{{ sort_order|default:'' }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}"><</a>
+      {% else %}
+        <!-- 
+          비활성화된 첫 페이지 버튼
+          
+          목적: 첫 페이지에 있을 때 비활성화된 버튼 표시
+            - CSS 클래스: page-link disabled (비활성화된 페이지 링크 스타일)
+            - 텍스트: « (첫 페이지 기호)
+        -->
+        <span class="page-link disabled">«</span>
+        
+        <!-- 
+          비활성화된 이전 페이지 버튼
+          
+          목적: 첫 페이지에 있을 때 비활성화된 버튼 표시
+            - CSS 클래스: page-link disabled (비활성화된 페이지 링크 스타일)
+            - 텍스트: < (이전 페이지 기호)
+        -->
+        <span class="page-link disabled"><</span>
+      {% endif %}
+
+      <!-- 
+        페이지 번호 표시 영역
+        
+        목적: 페이지 번호를 표시하고 현재 페이지를 하이라이트
+          - page_obj.paginator.num_pages: 전체 페이지 수
+          - page_obj.paginator.page_range: 페이지 번호 범위 (1부터 전체 페이지 수까지)
+          - 현재 페이지 ±3 범위의 페이지 번호만 표시 (너무 많은 페이지 번호 표시 방지)
+      -->
+      {% if page_obj.paginator.num_pages > 0 %}
+        <!-- 
+          페이지 번호 반복문
+          
+          목적: 페이지 번호를 순회하며 링크 또는 현재 페이지 표시
+            - num: 현재 순회 중인 페이지 번호
+        -->
+        {% for num in page_obj.paginator.page_range %}
+          <!-- 
+            현재 페이지 표시
+            
+            목적: 현재 페이지를 하이라이트하여 표시
+              - page_obj.number == num: 현재 페이지 번호와 일치하는지 확인
+              - CSS 클래스: page-link active (현재 페이지 스타일)
+          -->
+          {% if page_obj.number == num %}
+            <span class="page-link active">{{ num }}</span>
+          <!-- 
+            인접 페이지 번호 링크
+            
+            목적: 현재 페이지를 중심으로 항상 4개의 페이지 번호를 링크로 표시
+              - 현재 페이지가 1일 때: 1, 2, 3, 4 표시
+              - 현재 페이지가 2일 때: 1, 2, 3, 4 표시
+              - 현재 페이지가 3 이상일 때: 현재 페이지 - 1부터 현재 페이지 + 2까지 표시
+          -->
+          {% elif page_obj.number == 1 and num <= 4 %}
+            <a href="#" class="page-link" data-page="{{ num }}" data-sort="{{ sort_field|default:'' }}" data-order="{{ sort_order|default:'' }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">{{ num }}</a>
+          {% elif page_obj.number > 1 and num >= page_obj.number|add:'-1' and num <= page_obj.number|add:'2' %}
+            <a href="#" class="page-link" data-page="{{ num }}" data-sort="{{ sort_field|default:'' }}" data-order="{{ sort_order|default:'' }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <!-- 
+          페이지가 없을 때 기본 페이지 번호 표시
+          
+          목적: 페이지가 없을 때 기본적으로 1페이지 표시
+            - CSS 클래스: page-link active (현재 페이지 스타일)
+        -->
+        <span class="page-link active">1</span>
+      {% endif %}
+
+      <!-- 
+        다음 페이지 버튼 영역
+        
+        목적: 다음 페이지로 이동 및 마지막 페이지로 이동 버튼 표시
+          - page_obj.has_next: 다음 페이지가 있는지 확인
+          - 다음 페이지가 있으면 링크 버튼 표시
+          - 다음 페이지가 없으면 비활성화된 버튼 표시
+      -->
+      {% if page_obj.has_next %}
+        <!-- 
+          다음 페이지로 이동 링크
+          
+          목적: 현재 페이지의 다음 페이지로 이동
+            - href: ?page={{ page_obj.next_page_number }} + 정렬 파라미터 + 검색 파라미터
+            - page_obj.next_page_number: 다음 페이지 번호
+            - CSS 클래스: page-link (페이지 링크 스타일)
+            - 텍스트: > (다음 페이지 기호)
+        -->
+        <a href="#" class="page-link" data-page="{{ page_obj.next_page_number }}" data-sort="{{ sort_field|default:'' }}" data-order="{{ sort_order|default:'' }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">></a>
+        
+        <!-- 
+          마지막 페이지로 이동 링크
+          
+          목적: 마지막 페이지로 이동
+            - href: # (JavaScript로 처리)
+            - data-page: 마지막 페이지 번호
+            - page_obj.paginator.num_pages: 전체 페이지 수 (마지막 페이지 번호)
+            - CSS 클래스: page-link (페이지 링크 스타일)
+            - 텍스트: » (마지막 페이지 기호)
+        -->
+        <a href="#" class="page-link" data-page="{{ page_obj.paginator.num_pages }}" data-sort="{{ sort_field|default:'' }}" data-order="{{ sort_order|default:'' }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">»</a>
+      {% else %}
+        <!-- 
+          비활성화된 다음 페이지 버튼
+        
+          목적: 마지막 페이지에 있을 때 비활성화된 버튼 표시
+            - CSS 클래스: page-link disabled (비활성화된 페이지 링크 스타일)
+            - 텍스트: > (다음 페이지 기호)
+        -->
+        <span class="page-link disabled">></span>
+        
+        <!-- 
+          비활성화된 마지막 페이지 버튼
+          
+          목적: 마지막 페이지에 있을 때 비활성화된 버튼 표시
+            - CSS 클래스: page-link disabled (비활성화된 페이지 링크 스타일)
+            - 텍스트: » (마지막 페이지 기호)
+        -->
+        <span class="page-link disabled">»</span>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 
+      선택 병원 상세정보 섹션
+      
+      목적: 선택된 병원의 상세 정보를 표시하는 섹션
+        - 사용자 경험(UX) 개선: 테이블 행 클릭 시 해당 병원의 상세 정보를 AJAX로 로드하여 표시
+        - 데이터 표시: 병원의 기본 정보, 연락처, 주소, 의사 수 등을 그리드 레이아웃으로 표시
+        - 보안: 병원 비밀번호는 마스킹 처리하여 보안 강화
+        - 조건부 표시: selected_hospital이 있을 때만 상세 정보 표시, 없으면 플레이스홀더 표시
+      
+      동작 방식:
+        1. selected_hospital 변수가 존재하는지 확인
+        2. selected_hospital이 있으면 상세 정보 섹션 표시
+        3. selected_hospital이 없으면 플레이스홀더 섹션 표시 (행 클릭 시 AJAX로 상세 정보 로드)
+    -->
+    {% if selected_hospital %}
+    <!-- 
+      상세 정보 섹션 (병원이 선택된 경우)
+      
+      목적: 선택된 병원의 상세 정보를 표시
+        - CSS 클래스: 
+          → user-detail-section: 상세 정보 섹션 스타일
+          → card shadow-sm: 카드 스타일 및 그림자 효과
+        - 내용: 병원의 각 정보 필드를 그리드 레이아웃으로 표시
+    -->
+    <div class="user-detail-section card shadow-sm">
+      <div class="card-body">
+        <h3 class="detail-title card-title border-bottom pb-3 mb-4">선택 병원 상세정보</h3>
+        <div class="detail-grid row g-3">
+          <!-- 
+            병원명 정보 항목
+            
+            목적: 병원명을 표시
+              - col-md-6: 중간 화면 크기 이상에서 6컬럼 (50% 너비)
+              - detail-label: "병원명" (라벨)
+              - detail-value: selected_hospital.name (병원명)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">병원명</span>
+              <div class="detail-value">{{ selected_hospital.name }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            병원ID 정보 항목
+            
+            목적: 병원 ID를 표시
+              - detail-label: "병원ID" (라벨)
+              - detail-value: selected_hospital.hos_name (병원 ID)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">병원ID</span>
+              <div class="detail-value">{{ selected_hospital.hos_name|default:"-" }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            병원PW 정보 항목
+            
+            목적: 병원 비밀번호를 표시
+              - detail-label: "병원PW" (라벨)
+              - detail-value: selected_hospital.hos_password (병원 비밀번호)
+                → 비밀번호가 없거나 "-"이면 "-" 표시
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">병원PW</span>
+              <div class="detail-value">
+                {% if selected_hospital.hos_password and selected_hospital.hos_password != "-" %}
+                  {{ selected_hospital.hos_password }}
+                {% else %}
+                  -
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <!-- 
+            전화번호 정보 항목
+            
+            목적: 병원 전화번호를 표시
+              - detail-label: "전화번호" (라벨)
+              - detail-value: selected_hospital.tel (병원 전화번호)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">전화번호</span>
+              <div class="detail-value">{{ selected_hospital.tel|default:"-" }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            주소 정보 항목
+            
+            목적: 병원 주소를 표시
+              - detail-label: "주소" (라벨)
+              - detail-value: selected_hospital.address (병원 주소)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">주소</span>
+              <div class="detail-value">{{ selected_hospital.address }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            총 의사수 정보 항목
+            
+            목적: 병원에 소속된 총 의사 수를 표시
+              - detail-label: "총 의사수" (라벨)
+              - detail-value: 여러 필드를 확인하여 의사 수 표시
+                → 우선순위 1: selected_hospital.doctor_count
+                → 우선순위 2: selected_hospital.dr_total
+                → 기본값: 0명
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">총 의사수</span>
+              <div class="detail-value">
+                {% if selected_hospital.doctor_count %}
+                  {{ selected_hospital.doctor_count }}명
+                {% elif selected_hospital.dr_total %}
+                  {{ selected_hospital.dr_total }}명
+                {% else %}
+                  0명
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <!-- 
+      플레이스홀더 섹션 (병원이 선택되지 않은 경우)
+      
+      목적: 병원이 선택되지 않았을 때 플레이스홀더 표시
+        - CSS 클래스: 
+          → hospital-detail-section: 상세 정보 섹션 스타일
+          → placeholder-hidden: 플레이스홀더 숨김 스타일 (레이아웃 유지를 위해 공간만 차지)
+        - 동작: 테이블 행 클릭 시 AJAX로 상세 정보를 로드하여 이 섹션에 표시
+        - 레이아웃 유지: 플레이스홀더로 공간을 차지하여 페이지네이션 시 레이아웃이 깨지지 않도록 함
+    -->
+    <div class="user-detail-section placeholder-hidden"></div>
+    {% endif %}
+  </div>
+
+  {% comment %}
+    병원추가 모달
+    
+    목적: 새로운 병원을 추가하기 위한 모달 창
+      - CSS 클래스: modal (모달 스타일)
+      - id: addHospitalModal (모달 식별자)
+      - 내용: 병원 정보 입력 폼
+  {% endcomment %}
+  <div id="addHospitalModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">병원 추가</h2>
+        <button type="button" class="modal-close" id="closeAddHospitalModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- 에러 메시지 표시 영역 -->
+        <div id="modalErrorMessage" class="error-message" style="display: none;"></div>
+        
+        <form id="addHospitalForm" method="post" action="{% url 'hospital_list' %}">
+          {% csrf_token %}
+          
+          <!-- 필수 정보 섹션 -->
+          <div class="form-section">
+            <h3 class="form-section-title">필수 정보</h3>
+            <div class="form-group">
+              <label for="hospital_address" class="form-label">주소</label>
+              <div class="address-input-group">
+                <button type="button" class="btn-postcode-search" id="openHospitalSearchModalBtn">병원 검색</button>
+              </div>
+              <input type="text" id="hospital_address" name="hospital_address" class="form-input" placeholder="병원 검색을 통해 주소를 입력하세요" readonly style="margin-top: 8px;">
+            </div>
+            <div class="form-row">
+              <div class="form-group form-col-half">
+                <label for="hospital_name" class="form-label">병원명 <span class="required">*</span></label>
+                <input type="text" id="hospital_name" name="hospital_name" class="form-input" required placeholder="병원명을 입력하세요" readonly>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group form-col-half">
+                <label for="hospital_hos_name" class="form-label">병원 계정ID <span class="required">*</span></label>
+                <input type="text" id="hospital_hos_name" name="hospital_hos_name" class="form-input" required placeholder="계정ID를 입력하세요">
+              </div>
+              <div class="form-group form-col-half">
+                <label for="hospital_hos_password" class="form-label">병원 비밀번호 <span class="required">*</span></label>
+                <input type="password" id="hospital_hos_password" name="hospital_hos_password" class="form-input" required placeholder="비밀번호를 입력하세요" readonly>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group form-col-half">
+                <label for="hospital_tel" class="form-label">전화번호</label>
+                <input type="text" id="hospital_tel" name="hospital_tel" class="form-input" placeholder="예: 02-1234-5678" readonly>
+              </div>
+              <div class="form-group form-col-half">
+                <label for="hospital_estb_date" class="form-label">개원일</label>
+                <input type="text" id="hospital_estb_date" name="hospital_estb_date" class="form-input" placeholder="예: 2024.01.01" readonly>
+              </div>
+            </div>
+          </div>
+          
+          <!-- API에서 가져온 추가 정보 (hidden fields) -->
+          <input type="hidden" id="hospital_lat" name="hospital_lat" value="">
+          <input type="hidden" id="hospital_lng" name="hospital_lng" value="">
+          <input type="hidden" id="hospital_dr_total" name="hospital_dr_total" value="">
+          <input type="hidden" id="hospital_sggu" name="hospital_sggu" value="">
+          <input type="hidden" id="hospital_sido" name="hospital_sido" value="">
+          
+          <input type="hidden" name="action" value="add_hospital">
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelAddHospital">취소</button>
+            <button type="submit" class="btn-submit">추가</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {% comment %}
+    병원 검색 모달
+    
+    목적: 병원명으로 검색하여 주소를 자동으로 입력하기 위한 모달 창
+      - CSS 클래스: modal (모달 스타일)
+      - id: hospitalSearchModal (모달 식별자)
+      - 내용: 병원 검색 입력 및 결과 테이블
+  {% endcomment %}
+  <div id="hospitalSearchModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header">
+        <h2 class="modal-title">병원 검색</h2>
+        <button type="button" class="modal-close" id="closeHospitalSearchModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-search">
+          <input type="text" id="hospital-search-input" class="form-input" placeholder="병원 이름을 입력하세요">
+        </div>
+        <div class="modal-results" style="margin-top: 16px; max-height: 400px; overflow-y: auto;">
+          <table class="user-table" style="min-width: 100%;">
+            <thead>
+              <tr>
+                <th>병원명</th>
+                <th>주소</th>
+                <th>전화번호</th>
+                <th>개원일</th>
+              </tr>
+            </thead>
+            <tbody id="hospital-results-body">
+              <!-- JavaScript로 검색 결과 렌더링 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 
+    JavaScript 파일 로드
+    
+    목적: 페이지의 동적 기능을 제공하기 위한 JavaScript 파일 로드
+      - 로드 순서: admin_common.js → hospital_list.js
+      - admin_common.js: 관리자 패널 공통 JavaScript 함수들
+        → 페이지네이션, 정렬, 검색 등 공통 기능
+      - hospital_list.js: 병원 목록 페이지 전용 JavaScript 함수들
+        → 병원 선택, 테이블 행 클릭 이벤트, 병원 검색 등
+  -->
+  <script>
+    // 병원 검색 API URL
+    const HOSPITAL_SEARCH_URL = "{% url 'hospital_search' %}";
+    // 병원 목록 URL (병원 추가 폼 제출용)
+    const HOSPITAL_LIST_URL = "{% url 'hospital_list' %}";
+  </script>
+  <script src="{% static 'admin_panel/js/admin_common.js' %}"></script>
+  <script src="{% static 'admin_panel/js/hospital_list.js' %}"></script>
+</body>
+</html>

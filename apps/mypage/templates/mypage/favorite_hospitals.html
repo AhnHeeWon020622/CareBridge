@@ -1,0 +1,121 @@
+{% extends "mypage/base_mypage.html" %}
+{% load static %}
+
+{% block mypage_content %}
+<link rel="stylesheet" href="{% static 'mypage/css/favorite_hospitals.css' %}">
+<h2>즐겨 찾는 병원</h2>
+
+        {% if favorites %}
+            {% for fav in favorites %}
+                {% if fav.hos %}
+                    {# 일반 병원 즐겨찾기 #}
+                    {% with hospital=fav.hos %}
+                    <div class="fav-hospital-card">
+                        <!-- 병원 정보 영역 -->
+                        <div class="fav-hospital-header">
+                            <span class="name">{{ hospital.name }}</span>
+
+                            <!-- 즐겨찾기 해제 아이콘 -->
+                            <span class="favorite-star"
+                                  data-fav-id="{{ fav.fav_id }}">
+                                ★
+                            </span>
+                        
+                            {% if hospital.is_emergency %}
+                                <span class="badge-emergency">응급실</span>
+                            {% endif %}
+                        </div>                
+                        <div class="fav-hospital-info">
+                            <div class="meta">
+                                <span class="address">{{ hospital.address }}</span>
+                            </div>
+                        </div>
+                    
+                        <!-- 메모 표시 -->
+                        <div class="fav-hospital-memo">
+                            {% if fav.memo %}
+                                <p class="memo-text">{{ fav.memo|linebreaksbr }}</p>
+                            {% else %}
+                                <p class="memo-text memo-empty">작성된 메모가 없습니다.</p>
+                            {% endif %}
+                        
+                            <!-- 모달 여는 메모 버튼 -->
+                            <button type="button"
+                                    class="memo-open-btn"
+                                    data-fav-id="{{ fav.fav_id }}"
+                                    data-memo="{{ fav.memo|default_if_none:''|escape }}">
+                                메모
+                            </button>
+                        </div>
+                    </div>
+                    {% endwith %}
+                {% elif fav.er %}
+                    {# 응급실 즐겨찾기 #}
+                    {% with er=fav.er %}
+                    <div class="fav-hospital-card">
+                        <!-- 병원 정보 영역 -->
+                        <div class="fav-hospital-header">
+                            <span class="name">{{ er.er_name }}</span>
+
+                            <!-- 즐겨찾기 해제 아이콘 -->
+                            <span class="favorite-star"
+                                  data-fav-id="{{ fav.fav_id }}">
+                                ★
+                            </span>
+                        
+                            <span class="badge-emergency">응급실</span>
+                        </div>                
+                        <div class="fav-hospital-info">
+                            <div class="meta">                                
+                                <span class="address">{{ er.er_address }}</span>
+                            </div>
+                        </div>
+                    
+                        <!-- 메모 표시 -->
+                        <div class="fav-hospital-memo">
+                            {% if fav.memo %}
+                                <p class="memo-text">{{ fav.memo|linebreaksbr }}</p>
+                            {% else %}
+                                <p class="memo-text memo-empty">작성된 메모가 없습니다.</p>
+                            {% endif %}
+                        
+                            <!-- 모달 여는 메모 버튼 -->
+                            <button type="button"
+                                    class="memo-open-btn"
+                                    data-fav-id="{{ fav.fav_id }}"
+                                    data-memo="{{ fav.memo|default_if_none:''|escape }}">
+                                메모
+                            </button>
+                        </div>
+                    </div>
+                    {% endwith %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>등록된 즐겨찾기 병원이 없습니다.</p>
+        {% endif %}
+<!-- 메모 모달 오버레이 -->
+<div id="memoModal" class="memo-modal-overlay hidden">
+  <div class="memo-modal">
+    <div class="memo-modal-body">
+      <!-- 내용 입력 -->
+      <form id="memoForm" method="post">
+        {% csrf_token %}
+        <textarea name="memo" id="memoTextarea" rows="6" class="memo-textarea"></textarea>
+
+        <div class="memo-modal-actions">
+          <!-- 취소 -->
+          <button type="submit" name="action" value="edit" class="memo-btn-edit">
+            취소
+          </button>
+          <!-- 저장 -->
+          <button type="submit" name="action" value="save" class="memo-btn-save">
+            저장
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="{% static 'mypage/js/favorite_hospitals.js' %}"></script>
+{% endblock %}

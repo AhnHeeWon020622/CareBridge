@@ -1,0 +1,287 @@
+/* CareBridge 통일 카드 스타일 */
+:root {
+  --cb-bg: #ffffff;
+  --cb-card-bg: #ffffff;
+  --cb-border: #e5e7eb; /* 미세 테두리 */
+  --cb-radius: 12px;    /* 필요 시 16px로 조정 가능 */
+  --cb-text: #111827;
+  --cb-muted: #6b7280;
+  --cb-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+  --cb-primary: #2563eb;
+}
+
+body {
+  margin: 0;
+  background: var(--cb-bg);
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  color: var(--cb-text);
+}
+
+.container {
+  max-width: 1500px;
+  margin: 24px auto;
+  padding: 0 24px 24px;
+}
+
+h2 {
+  margin: 0 0 16px 0;
+  color: var(--cb-text);
+  border-bottom: 1px solid var(--cb-border);
+  padding-bottom: 10px;
+}
+
+/* 상단 환자 정보 */
+.patient-info-header {
+  background: #ffffff;
+  border: 1px solid var(--cb-border);
+  border-radius: var(--cb-radius);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  box-shadow: var(--cb-shadow);
+}
+
+.patient-info-header strong {
+  color: var(--cb-muted);
+  margin-right: 6px;
+  font-weight: 900;
+}
+
+/* 3열 레이아웃 */
+.record-view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 16px;
+  height: 700px;
+}
+
+.panel {
+  background: var(--cb-card-bg);
+  border: 1px solid var(--cb-border);
+  border-radius: var(--cb-radius);
+  box-shadow: var(--cb-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  min-height: 0;
+}
+
+.panel h3 {
+  margin: 0 0 12px 0;
+  color: var(--cb-text);
+  font-size: 15px;
+  border-bottom: 1px dashed var(--cb-border);
+  padding-bottom: 8px;
+}
+
+#recordList .list-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.list-item {
+  padding: 10px;
+  border-bottom: 1px dotted var(--cb-border);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.list-item:hover,
+.list-item.selected {
+  background-color: #eef2ff;
+  border-left: 3px solid var(--cb-primary);
+}
+
+#soapDetail {
+  font-size: 14px;
+  line-height: 1.6;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.read-only-text {
+  border: 1px solid var(--cb-border);
+  padding: 10px 12px;
+  background-color: #f9fafb;
+  border-radius: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.soap-section strong {
+  display: block;
+  margin: 0 0 6px 0;
+  color: var(--cb-text);
+  font-weight: 900;
+}
+
+.soap-section-text {
+  max-height: 110px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 10px;
+  border: 1px solid var(--cb-border);
+  border-radius: 10px;
+  background-color: #ffffff;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.right-column-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-summary-panel {
+  padding: 12px;
+  border: 1px solid var(--cb-border);
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: var(--cb-shadow);
+}
+
+.order-summary-panel h4 {
+  color: var(--cb-text);
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 900;
+  border-bottom: 1px dashed var(--cb-border);
+  padding-bottom: 6px;
+}
+
+.order-content-row {
+  font-size: 13px;
+  padding: 6px 0;
+}
+
+.order-content-row strong {
+  display: inline-block;
+  width: 80px;
+  color: var(--cb-muted);
+  font-weight: 900;
+}
+
+.detail-button {
+  background-color: var(--cb-primary);
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  float: right;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.detail-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* 모달 공통 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  visibility: hidden; /* JS에서 토글 */
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--cb-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.20);
+  width: 560px;
+  max-width: calc(100vw - 32px);
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 14px 16px;
+  background-color: var(--cb-primary);
+  color: white;
+  font-size: 16px;
+  font-weight: 900;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-body {
+  padding: 16px;
+  flex-grow: 1;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.modal-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--cb-border);
+  text-align: right;
+}
+
+.modal-footer button {
+  background-color: #111827;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.modal-footer button:hover {
+  background-color: #0b1220;
+}
+
+.lab-attachments ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.lab-attachments a {
+  color: var(--cb-primary);
+  text-decoration: none;
+}
+
+.lab-attachments a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1200px) {
+  .record-view-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  #soapDetail {
+    max-height: none;
+  }
+  .patient-info-header {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px 24px;
+  }
+  .patient-info-header {
+    grid-template-columns: 1fr;
+  }
+}

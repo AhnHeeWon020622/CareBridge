@@ -1,0 +1,971 @@
+  body {
+    margin: 0;
+    background: #F4F6F9;
+    font-family: "Noto Sans KR", sans-serif;
+    color: #222;
+  }
+
+  /* 전체 너비 레이아웃 */
+  .page {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* === 1번 사진: 히어로 배너 섹션 (전체 너비) === */
+  .hero-row {
+    display: block;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  /* 히어로 이미지를 전체 너비로 - 배너는 꽉 차게 */
+  .hero-left {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+
+  /* 기존 .hero-left img 교체 */
+  .hero-left .hero-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+  }
+
+  .hero-left .hero-slide.active {
+    opacity: 1;
+    z-index: 1;
+  }
+
+  .hero-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .hero-arrow.prev { 
+    left: 20px; 
+  }
+  .hero-arrow.next { 
+    right: 20px; 
+  }
+
+  .hero-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  .hero-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .hero-dot.active {
+    background: #ffffff;
+  }
+
+  /* 오른쪽: 뉴스레터 패널 */
+  .news-panel {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px 22px 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  }
+
+  .news-panel h2 {
+    margin: 0 0 14px;
+    font-size: 22px;
+    color: #1B3C73;
+  }
+
+  .news-card {
+    background: #F8FAFF;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: .2s;
+  }
+
+  .news-card:hover {
+    background: #E9F1FF;
+    transform: translateY(-2px);
+  }
+
+  .news-tag {
+    font-size: 12px;
+    color: #CA5F3C;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .news-title {
+    display: block;
+    font-size: 15px;
+    color: #1B2C4A;
+    text-decoration: none;
+    margin-bottom: 4px;
+  }
+
+  .news-title:hover {
+    text-decoration: underline;
+  }
+
+  .news-date {
+    font-size: 12px;
+    color: #777;
+  }
+.newsletter-title a {
+    text-decoration: none; 
+    color: inherit;  
+    cursor: pointer; 
+}
+
+.newsletter-title a:hover {
+    text-decoration: none; 
+}
+
+/* ========= 1번 사진: 서비스 카드 섹션 (3개 카드) - 별도 섹션으로 구분 ========= */
+.info-card-link {
+  text-decoration: none;
+}
+
+/* hero-row를 flex로 변경하여 배너와 카드 섹션 분리 */
+.hero-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 0;
+  background: #fff;
+}
+
+/* 배너는 전체 너비로 */
+.hero-left {
+  order: 1;
+  width: 100%;
+}
+
+/* 카드 섹션을 별도로 구분 */
+.hero-row > .info-card-link,
+.hero-row > .info-card {
+  order: 2;
+  display: inline-block;
+  width: calc(33.333% - 20px);
+  margin: 60px 10px 0;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+/* 카드 섹션을 위한 래퍼 - 중앙 정렬 */
+.hero-row::after {
+  content: '';
+  display: block;
+  order: 2;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* 카드 섹션 배경 및 중앙 정렬을 위한 스타일 */
+.hero-row {
+  text-align: center;
+}
+
+.hero-row > .info-card-link,
+.hero-row > .info-card {
+  text-align: left;
+}
+
+/* 서비스 카드 스타일 (오렌지 헤더) */
+.hero-row > .info-card-link .info-card,
+.hero-row > .info-card {
+  background: #fff;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  height: auto;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.hero-row > .info-card-link .info-card:hover,
+.hero-row > .info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* 카드 헤더 (오렌지 배경) */
+.hero-row > .info-card-link .info-card > div:first-child,
+.hero-row > .info-card > div:first-child {
+  background: #FF6B35;
+  padding: 30px 25px;
+  color: #fff;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.hero-row > .info-card-link .info-card h3,
+.hero-row > .info-card h3 {
+  margin: 0 0 5px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.hero-row > .info-card-link .info-card p,
+.hero-row > .info-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.9);
+  opacity: 1;
+}
+
+/* 카드 버튼 영역 (플러스 아이콘처럼 - 1번 사진 스타일) */
+.hero-row > .info-card-link .card-btn-area,
+.hero-row > .info-card .card-btn-area {
+  margin-top: 0;
+  padding: 0;
+  position: absolute;
+  bottom: 30px;
+  right: 25px;
+  background: transparent;
+}
+
+.hero-row > .info-card-link .card-btn,
+.hero-row > .info-card .card-btn {
+  display: inline-block;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+  margin: 0;
+  border-radius: 0;
+  text-decoration: none;
+}
+
+.hero-row > .info-card-link .card-btn:hover,
+.hero-row > .info-card .card-btn:hover {
+  background: transparent;
+  color: #fff;
+  opacity: 0.8;
+}
+
+/* 카드 이미지 영역 (의미적으로는 없지만 시각적으로 추가) */
+.hero-row > .info-card-link .info-card::after,
+.hero-row > .info-card::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  flex: 1;
+  margin-top: auto;
+}
+
+/* 카드 배경색 제거 (오렌지 헤더만 사용) */
+.card-emergency,
+.card-reservation,
+.card-qna {
+  background: #fff !important;
+}
+
+/* 카드 섹션 배경 및 패딩 */
+.hero-row {
+  background: #fff;
+}
+
+/* 카드 섹션을 위한 패딩 추가 */
+.hero-row > .info-card-link:first-of-type,
+.hero-row > .info-card:first-of-type {
+  margin-top: 60px;
+  padding-top: 0;
+}
+
+.hero-row > .info-card-link:last-of-type,
+.hero-row > .info-card:last-of-type {
+  margin-bottom: 60px;
+  padding-bottom: 0;
+}
+
+
+  /* ========= 반응형 디자인 ========= */
+  /* 1024px 이하: 2열 / 카드 2개 */
+@media (max-width: 1024px) {
+  .hero-left {
+    height: 400px;
+  }
+
+  .hero-row > .info-card-link,
+  .hero-row > .info-card {
+    width: calc(50% - 20px);
+  }
+
+  .hero-row > .info-card:nth-child(4) {
+    width: calc(100% - 20px);
+    clear: both;
+  }
+
+  .service-list {
+    padding: 0 30px;
+  }
+
+  .service-item {
+    flex-direction: column !important;
+    gap: 30px;
+  }
+
+  .service-image {
+    flex: 0 0 100%;
+    height: 350px; /* 태블릿에서도 이미지 크기 통일 */
+  }
+}
+
+/* 768px 이하: 전부 1열 */
+@media (max-width: 768px) {
+  /* 반응형일 때 배너 섹션 숨김 */
+  .hero-banner-section {
+    display: none;
+  }
+
+  .hero-left {
+    height: 300px;
+  }
+
+  .hero-row > .info-card-link,
+  .hero-row > .info-card {
+    width: calc(100% - 20px);
+    float: none;
+    margin: 20px 10px 0;
+  }
+
+  /* 모바일에서 서비스 소개 섹션 숨김 */
+  .service-intro-section {
+    display: none;
+  }
+
+  .section-header {
+    padding: 0 20px;
+  }
+
+  .section-header h2 {
+    font-size: 28px;
+  }
+
+  .service-list {
+    padding: 0 20px;
+    gap: 40px;
+  }
+
+  .service-text h3 {
+    font-size: 24px;
+  }
+}
+
+/* 480px 이하: 폰용 최적화 */
+@media (max-width: 480px) {
+  /* 반응형일 때 배너 섹션 숨김 */
+  .hero-banner-section {
+    display: none;
+  }
+
+  .hero-left {
+    height: 250px;
+  }
+
+  /* 모바일에서 서비스 소개 섹션 숨김 */
+  .service-intro-section {
+    display: none;
+  }
+
+  .hero-row > .info-card-link .info-card h3,
+  .hero-row > .info-card h3 {
+    font-size: 20px;
+  }
+}
+.news-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.news-card {
+  cursor: pointer;
+}
+/* === 챗봇 플로팅 버튼 === */
+.chatbot-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1100;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 0;
+}
+
+.chatbot-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
+}
+
+.chatbot-btn img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+}
+
+/* 패널 기본 */
+.chatbot-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 100px;
+  width: 360px;
+  max-height: 520px;
+  height: 500px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1200;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* 열렸을 때 */
+.chatbot-panel.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* 헤더 */
+.chatbot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f3f7ff;
+  border-bottom: 1px solid #e0e6f0;
+  flex: 0 0 auto;
+}
+
+.chatbot-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chatbot-close {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* ===============================
+   본문 영역 (스크롤 핵심)
+   =============================== */
+
+.chatbot-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* 내부 스크롤 필수 */
+}
+
+.chatbot-messages {
+  flex: 1;
+  min-height: 0;          /* 내부 스크롤 필수 */
+  overflow-y: auto;
+  padding: 12px 12px 8px;
+  background: #ffffff;
+}
+
+/* ===============================
+   말풍선 안정화
+   =============================== */
+
+.chat-bubble {
+  max-width: 85%;
+  margin-bottom: 10px;
+  word-break: break-word;      /* 긴 단어 강제 줄바꿈 */
+  overflow-wrap: anywhere;    /* URL, 연속문자 대응 */
+}
+
+.chat-bubble.bot {
+  align-self: flex-start;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+}
+
+.chat-text {
+ /*  white-space: pre-wrap;      <br>, 개행 유지 */
+  line-height: 1.4;
+}
+
+/* ===============================
+   입력 영역 고정
+   =============================== */
+
+.chatbot-input-area {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid #e0e6f0;
+  background: #ffffff;
+  flex: 0 0 auto;             /* 하단 고정 */
+}
+
+.chat-input-wrapper {
+  flex: 1;
+  min-width: 0;               /* 버튼 때문에 튀어나오는 것 방지 */
+}
+
+.chat-input {
+  width: 100%;
+  resize: none;               /* 사용자가 늘려서 깨지는 것 방지 */
+  max-height: 120px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* 전송 버튼 */
+.chat-send-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+/* 본문 */
+.chatbot-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.chatbot-messages {
+    padding: 16px 14px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 말풍선 공통 */
+.chat-bubble {
+    position: relative;
+    display: inline-flex;
+    max-width: 85%;
+    padding: 10px 12px;
+    border-radius: 18px;
+    font-size: 13px;
+    line-height: 1.5;
+    /* height: 20px; */
+}
+
+/* 봇 메시지 (왼쪽) */
+.chat-bubble.bot {
+    align-self: flex-start;
+    background: #f3f6ff;
+    border: 1px solid #d1d7e5;
+    border-radius: 16px 16px 16px 4px;
+}
+
+/* 사용자 메시지 (오른쪽) */
+.chat-bubble.user {
+    align-self: flex-end;
+    background: #1e88e5;
+    color: #ffffff;
+    border-radius: 16px 16px 4px 16px;
+}
+
+/* 번호 동그라미 숨기기 */
+.chat-step {
+    display: none;
+}
+
+/* 예측 결과 영역 안의 버튼 */
+.chat-prediction-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.chat-disease-list {
+    margin-left: 14px;
+    margin-bottom: 8px;
+}
+
+.chat-disease-list li {
+    list-style: disc;
+}
+
+/* 병원 예약 버튼 */
+.chat-reserve-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: 1px solid #1e88e5;
+    background: #ffffff;
+    color: #1e88e5;
+    font-size: 12px;
+    cursor: pointer;
+}
+/* 입력 영역 */
+.chatbot-input-area {
+    border-top: 1px solid #e0e6f0;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fafbff;
+}
+
+.chat-input-wrapper {
+    flex: 1;
+}
+
+.chat-input {
+    width: 100%;
+    min-height: 40px;
+    max-height: 90px;
+    resize: none;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #d1d7e5;
+    font-size: 13px;
+    outline: none;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+.chat-input:focus {
+    border-color: #1e88e5;
+}
+
+/* 전송 버튼 */
+.chat-send-btn {
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: none;
+    background: #1e88e5;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-send-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+@media (max-width: 480px) {
+    .chatbot-panel {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 80px;
+    }
+
+    .chatbot-btn {
+        right: 16px;
+        bottom: 16px;
+    }
+}
+
+/* === 배너 섹션 (전체 너비) === */
+.hero-banner-section {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.hero-left {
+  position: relative;
+  width: 100%;
+  height: 550px;
+  overflow: hidden;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+/* === 서비스 카드 섹션 (1번 사진처럼 - 연한 회색 배경, 가로 1행, 중앙 정렬) === */
+.service-cards-section {
+  width: 100%;
+  background: #ffffff;
+  padding: 60px 0;
+}
+
+.service-cards-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;      /* 기본: 세로 1열 (모바일 기본) */
+  align-items: stretch;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.service-cards-container > .info-card-link,
+.service-cards-container > .info-card {
+  width: 100%;
+  max-width: 100%;
+  flex: 1 1 100%;
+  box-sizing: border-box;
+}
+
+/* === 카드 스타일 (검정 제목, 회색 설명) === */
+.service-cards-container .info-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 30px 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+.service-cards-container .info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+/* 태블릿: 세로 1열 유지, 패딩만 보정 (768~1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .service-cards-container {
+    padding: 0 32px;
+  }
+}
+
+/* PC: 가로 1열(3등분) (≥1024px) */
+@media (min-width: 1024px) {
+  .service-cards-container {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  .service-cards-container > .info-card-link,
+  .service-cards-container > .info-card {
+    flex: 0 0 calc(33.333% - 14px);
+    max-width: calc(33.333% - 14px);
+  }
+
+  /* PC 버전에서 서비스 소개 섹션 숨김 (모바일과 동일하게) */
+  /* .service-intro-section {
+    display: none;
+  } */
+}
+
+/* 카드 제목 (검정색) */
+.service-cards-container .info-card h3 {
+  margin: 0 0 15px;
+  font-size: 36px;
+  font-weight: 700;
+  color: #000; /* 검정색 */
+}
+
+/* 카드 설명 텍스트 (회색) */
+.service-cards-container .info-card p {
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #666; /* 회색 */
+  flex: 1;
+}
+
+/* 카드 버튼 영역 (2번 사진처럼) */
+.service-cards-container .card-btn-area {
+  margin-top: auto;
+  padding-top: 15px;
+}
+
+.service-cards-container .card-btn {
+  display: inline-block;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #0B5C7A;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.service-cards-container .card-btn:hover {
+  color: #5A4FCF;
+  text-decoration: underline;
+}
+
+/* 기존 오렌지 헤더 스타일 제거 */
+.service-cards-container .info-card > div:first-child {
+  background: transparent;
+  padding: 0;
+  position: relative;
+}
+
+/* 카드 이미지 영역 제거 */
+.service-cards-container .info-card::after {
+  display: none;
+}
+
+/* 카드 배경색 제거 */
+.service-cards-container .card-emergency,
+.service-cards-container .card-reservation,
+.service-cards-container .card-qna {
+  background: #fff !important;
+}
+
+/* === SERVICE INTRO 섹션 (2번 사진처럼 - 가로 배치, 배경색 전체 너비) === */
+.service-intro-section {
+  width: 100%;
+  background: transparent;
+  padding: 0;
+  margin-top: 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 40px 100px 0;
+  box-sizing: border-box;
+}
+
+/* 각 서비스 아이템을 개별 섹션으로 (1번 사진처럼) */
+.service-item {
+  width: 100%;
+  padding: 80px 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.service-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  box-sizing: border-box;
+}
+
+/* 각 섹션별 배경색 (2번 사진처럼 전체 너비) */
+.service-item-1 {
+  background: #FAFAFA;
+}
+
+.service-item-2 {
+  background: #FFFFFF; 
+}
+
+.service-item-3 {
+  background: #FAFAFA; 
+}
+
+.service-item-4 {
+  padding-bottom:120px;
+  background: #FFFFFF; 
+}
+
+/* 짝수 번째는 이미지와 텍스트 순서 반대 */
+.service-item-2 .service-container,
+.service-item-4 .service-container {
+  flex-direction: row-reverse;
+}
+
+.service-image {
+  flex: 0 0 50%;
+  min-width: 0;
+  height: 400px; /* 모든 이미지 크기 통일 */
+  overflow: hidden; /* 이미지가 컨테이너를 벗어나지 않도록 */
+}
+
+.service-image img {
+  display: block;
+  width: 100%;
+  height: 100%; /* 컨테이너 높이에 맞춤 */
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  object-fit: cover; /* 이미지 비율 유지하며 컨테이너 채움 */
+  object-position: center; /* 이미지 중앙 정렬 */
+}
+
+.service-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.service-text h3 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #222;
+  font-weight: 700;
+}
+
+.service-text p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 30px;
+}

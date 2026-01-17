@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="{% static 'core/img/favicon.png' %}" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 환자 리스트</title>
+    <link rel="stylesheet" href="{% static 'emr/css/today_patient_list.css' %}">
+</head>
+<body>
+
+{% include "core/_header.html" %}
+
+<div class="container">
+    <h2>예약 환자 리스트</h2>
+
+    <div class="card">
+        <div class="patient-list-container">
+            <table class="patient-list-table">
+                <thead>
+                    <tr>
+                        <th>No</th> 
+                        <th>성명</th>
+                        <th>성별</th>
+                        <th>생년월일</th>
+                        <th>예약시간</th>
+                    </tr>
+                </thead>
+                <tbody id="patientListBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'emr/js/today_patient_list.js' %}"></script>
+
+<div class="card" id="summaryPanel">
+    <!-- 환자 클릭 시 내용 채워짐 -->
+</div>
+
+</body>
+</html>

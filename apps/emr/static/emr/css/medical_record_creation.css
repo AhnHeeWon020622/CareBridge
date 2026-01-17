@@ -1,0 +1,585 @@
+/* CareBridge 통일 카드 스타일 */
+:root {
+  --cb-bg: #ffffff;
+  --cb-card-bg: #ffffff;
+  --cb-border: #e5e7eb; /* 미세 테두리 */
+  --cb-radius: 12px; /* 필요 시 16px로 조정 가능 */
+  --cb-text: #111827;
+  --cb-muted: #6b7280;
+  --cb-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+  --cb-primary: #2563eb;
+  --mr-top-card-min-height: 200px;
+  --mr-bottom-card-min-height: 200px;
+}
+
+body {
+  margin: 0;
+  background: var(--cb-bg);
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  color: var(--cb-text);
+}
+
+.container {
+  max-width: 1500px;
+  margin: 24px auto;
+  padding: 0 24px 24px;
+}
+
+h2 {
+  margin: 0 0 16px 0;
+  color: var(--cb-text);
+  border-bottom: 1px solid var(--cb-border);
+  padding-bottom: 10px;
+}
+
+/* 공통 카드 */
+.cb-card,
+.card {
+  background: var(--cb-card-bg);
+  border: 1px solid var(--cb-border);
+  border-radius: var(--cb-radius);
+  padding: 40px;
+  box-shadow: var(--cb-shadow);
+}
+
+.card {
+  margin-bottom: 16px;
+}
+
+/* 상단 환자/의사 정보 */
+.patient-header-info {
+  background: #ffffff;
+  border: 1px solid var(--cb-border);
+  border-radius: var(--cb-radius);
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  font-size: 14px;
+  box-shadow: var(--cb-shadow);
+  margin-bottom: 16px;
+}
+
+.patient-header-info strong {
+  color: var(--cb-muted);
+  font-weight: 900;
+  margin-right: 6px;
+}
+
+/* 중앙 3열 */
+.middle-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 32px;
+}
+
+/* 하단 2열 */
+.bottom-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+
+.middle-content-grid > .card,
+.bottom-content-grid > .card {
+  margin-bottom: 0;
+}
+
+.middle-content-grid > .card {
+  min-height: var(--mr-top-card-min-height);
+}
+
+.bottom-content-grid > .card {
+  min-height: var(--mr-bottom-card-min-height);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--cb-text);
+  margin-bottom: 12px;
+  border-bottom: 1px dashed var(--cb-border);
+  padding-bottom: 8px;
+}
+
+.placeholder-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.placeholder-text {
+  color: var(--cb-muted);
+  font-weight: 700;
+}
+
+.patient-note-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.readonly-textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 12px 12px;
+  border: 1px solid var(--cb-border);
+  border-radius: 12px;
+  background: #f9fafb;
+  color: var(--cb-text);
+  line-height: 1.5;
+  font-weight: 700;
+  resize: none;
+}
+
+.readonly-textarea:focus {
+  outline: 2px solid rgba(37, 99, 235, 0.25);
+  outline-offset: 2px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 900;
+  color: var(--cb-text);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--cb-border);
+  border-radius: 10px;
+  box-sizing: border-box;
+  background: #ffffff;
+  font-family: inherit;
+  color: inherit;
+}
+
+.form-group textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: #f3f4f6;
+  color: var(--cb-muted);
+}
+
+/* SOAP */
+.soap-area textarea {
+  min-height: 30px;
+}
+
+/* 처방 */
+.date-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.date-group span {
+  color: var(--cb-muted);
+  font-weight: 900;
+}
+
+.order-add-button {
+  background-color: #16a34a;
+  color: #ffffff;
+  border: 1px solid transparent;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+  margin-top: 10px;
+}
+
+.order-add-button:hover {
+  background-color: #15803d;
+}
+
+.prescription-block {
+  border: 1px solid var(--cb-border);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  background-color: #ffffff;
+}
+
+.prescription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.prescription-title {
+  font-weight: 900;
+  color: var(--cb-text);
+}
+
+.prescription-summary {
+  font-size: 13px;
+  color: var(--cb-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+  text-align: right;
+}
+
+.prescription-block.collapsed {
+  padding: 10px 12px;
+  background-color: #f9fafb;
+}
+
+.prescription-block.collapsed .prescription-row {
+  display: none;
+}
+
+.prescription-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prescription-area .drug-input-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.drugName {
+  flex: 1 1 auto;
+}
+
+.drugCode {
+  flex: 0 0 160px;
+}
+
+.search-btn-5page {
+  background-color: var(--cb-primary);
+  border: 1px solid transparent;
+  padding: 10px 14px;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.search-btn-5page:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-remove {
+  align-self: stretch;
+  width: 100%;
+  height: 40px;
+  margin-top: 4px;
+  border: 1px solid var(--cb-border);
+  background: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+  color: #dc2626;
+}
+
+.btn-remove:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+/* 오더/응급 */
+.radio-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.emergency-label {
+  font-weight: 900;
+  color: var(--cb-text);
+}
+
+/* 예약 */
+.btn-time-select {
+  background-color: var(--cb-primary);
+  color: #ffffff;
+  border: 1px solid transparent;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.btn-time-select:hover {
+  background-color: #1d4ed8;
+}
+
+#selectedTimeLabel {
+  font-weight: 900;
+  color: var(--cb-text);
+}
+
+#reservationMemo {
+  resize: vertical;
+  overflow-y: auto;
+}
+
+/* 저장 버튼 */
+.action-buttons {
+  text-align: right;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--cb-border);
+}
+
+.btn-save {
+  background-color: #16a34a;
+  padding: 12px 18px;
+  font-weight: 900;
+  font-size: 14px;
+  color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background-color: #15803d;
+}
+
+/* 모달 공통 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  width: 520px;
+  max-width: calc(100vw - 32px);
+  max-height: 80vh;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--cb-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  background: var(--cb-primary);
+  padding: 14px 16px;
+  color: white;
+  font-size: 16px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#drugSearchModal .modal-content {
+  width: 408px;
+  height: 75vh;
+  max-height: 90vh;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.search-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.search-controls input {
+  flex-grow: 1;
+}
+
+.search-controls button {
+  background: var(--cb-primary);
+  border: 1px solid transparent;
+  padding: 10px 14px;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.search-controls button:hover {
+  background: #1d4ed8;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.result-table th,
+.result-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--cb-border);
+  text-align: left;
+}
+
+.result-table th {
+  background: #f9fafb;
+  font-weight: 900;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.result-table tbody tr:hover,
+.result-table tbody tr.selected {
+  background: #eef2ff;
+  cursor: pointer;
+}
+
+.modal-footer {
+  padding: 12px 16px;
+  text-align: right;
+  border-top: 1px solid var(--cb-border);
+  background: #ffffff;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel-6page,
+.btn-confirm-6page {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.btn-cancel-6page {
+  background-color: #111827;
+  color: #ffffff;
+}
+
+.btn-confirm-6page {
+  background-color: var(--cb-primary);
+  color: #ffffff;
+}
+
+.btn-cancel-6page:hover {
+  background-color: #0b1220;
+}
+
+.btn-confirm-6page:hover {
+  background-color: #1d4ed8;
+}
+
+/* 시간 선택 */
+.time-grid,
+#timeGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.time-btn {
+  padding: 12px 0;
+  border: 1px solid var(--cb-border);
+  background: #ffffff;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.15s ease;
+  font-weight: 900;
+}
+
+.time-btn:hover {
+  background: #f3f4f6;
+}
+
+.time-btn.disabled {
+  background: #e5e7eb !important;
+  color: #6b7280 !important;
+  border-color: #d1d5db !important;
+  cursor: not-allowed !important;
+  opacity: 0.9;
+}
+
+@media (max-width: 1200px) {
+  .middle-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-header-info {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px 24px;
+  }
+
+  .patient-header-info {
+    grid-template-columns: 1fr;
+  }
+
+  .prescription-area .drug-input-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .drugCode {
+    flex: 1 1 auto;
+  }
+
+  .modal-content {
+    width: 100%;
+  }
+
+  .btn-save {
+    width: 100%;
+  }
+}

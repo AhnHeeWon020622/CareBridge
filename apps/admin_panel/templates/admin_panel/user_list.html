@@ -1,0 +1,893 @@
+<!-- 
+  사용자 목록 페이지 템플릿
+  
+  목적: 사용자 목록을 표시하고 검색, 정렬, 페이지네이션 기능을 제공하는 관리자 페이지
+    - 사용자 경험(UX) 개선: 관리자가 사용자 목록을 확인하고 검색, 정렬, 페이지네이션 기능을 사용할 수 있도록 함
+    - 데이터 관리: 사용자 정보를 테이블로 표시하고 상세 정보 확인
+    - 기능 제공: 검색, 정렬, 페이지네이션, 상세 정보 표시
+  
+  주요 기능:
+    - 사용자 목록 표시: 전체 사용자 목록을 테이블로 표시
+    - 검색 기능: ID, 이름, 이메일, 전화번호로 검색 가능
+    - 정렬 기능: No., ID, 이름, 생년월일, 성별, 전화번호, 이메일, 주소, 생성일시로 정렬 가능
+    - 페이지네이션: 많은 데이터를 페이지 단위로 나누어 표시
+    - 상세 정보 표시: 사용자 행 클릭 시 상세 정보를 AJAX로 로드하여 표시
+  
+  관련 파일:
+    - CSS: admin_common.css, user_list.css
+    - JavaScript: admin_common.js, user_list.js
+    - 상세 정보 템플릿: user_list_detail.html (AJAX로 로드)
+-->
+{% load static %}
+{% load masking_filters %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 
+    HTML 문서 메타 정보
+    
+    목적: 문서의 기본 정보 및 설정
+      - charset: UTF-8 인코딩 설정 (한글 지원)
+      - viewport: 반응형 디자인을 위한 뷰포트 설정
+      - title: 브라우저 탭에 표시될 페이지 제목
+  -->
+  <meta charset="UTF-8">
+  <!-- 
+    뷰포트 설정
+    
+    목적: 모바일 기기에서 올바른 화면 크기로 표시되도록 설정
+      - width=device-width: 기기의 실제 너비에 맞춤
+      - initial-scale=1.0: 초기 확대/축소 비율 100%
+      - minimum-scale=0.5: 최소 확대/축소 비율 50%
+      - maximum-scale=2.0: 최대 확대/축소 비율 200%
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0">
+  <title>사용자 목록 - CareBridge 관리자</title>
+  <!-- Favicon 설정 -->
+ <link rel="icon" href="{% static 'core/img/favicon.png' %}" type="image/png">
+  
+  <!-- 
+    CSS 파일 로드
+    
+    목적: 페이지 스타일링을 위한 CSS 파일 로드
+      - admin_common.css: 관리자 패널 공통 스타일
+      - user_list.css: 사용자 목록 페이지 전용 스타일
+  -->
+  <link rel="stylesheet" href="{% static 'admin_panel/css/admin_common.css' %}">
+  <link rel="stylesheet" href="{% static 'admin_panel/css/user_list.css' %}">
+</head>
+<body>
+  {% comment %}
+    헤더 섹션
+    
+    목적: 페이지 상단에 로고와 사용자 정보, 로그아웃 버튼을 표시
+      - 로고: CareBridge 로고 이미지 및 대시보드 링크
+      - 사용자 정보: 로그인한 관리자 이름 표시
+      - 로그아웃 버튼: 로그아웃 기능 제공
+      - 공통 헤더 템플릿 사용: core/header.html
+  {% endcomment %}
+  {% include 'core/_header.html' %}
+
+  <!-- 
+    메인 컨테이너
+    
+    목적: 페이지의 주요 내용을 담는 컨테이너
+      - CSS 클래스: container (컨테이너 스타일)
+      - 내용: 탭, 검색 섹션, 목록, 페이지네이션, 상세 정보
+  -->
+  <div class="container">
+    <!-- 
+      상단 탭 메뉴
+      
+      목적: 관리자 패널의 각 페이지로 이동할 수 있는 탭 메뉴
+        - 사용자 경험(UX) 개선: 관리자가 쉽게 다른 페이지로 이동할 수 있도록 함
+        - 현재 페이지 표시: active 클래스로 현재 페이지 표시
+    -->
+    <div class="tabs">
+      <!-- 
+        사용자목록 탭 (현재 페이지)
+        
+        목적: 사용자 목록 페이지로 이동 (현재 페이지)
+          - href: {% url 'user_list' %} - 사용자 목록 URL
+          - CSS 클래스: tab active (탭 스타일 + 현재 페이지 표시)
+      -->
+      <a href="{% url 'user_list' %}" class="tab active">사용자목록</a>
+      
+      <!-- 
+        의사목록 탭
+        
+        목적: 의사 목록 페이지로 이동
+          - href: {% url 'doctor_list' %} - 의사 목록 URL
+          - CSS 클래스: tab (탭 스타일)
+      -->
+      <a href="{% url 'doctor_list' %}" class="tab">의사목록</a>
+      
+      <!-- 
+        병원정보 탭
+        
+        목적: 병원 정보 페이지로 이동
+          - href: {% url 'hospital_list' %} - 병원 정보 URL
+          - CSS 클래스: tab (탭 스타일)
+      -->
+      <a href="{% url 'hospital_list' %}" class="tab">병원정보</a>
+      
+      <!-- 
+        승인대기 탭
+        
+        목적: 승인 대기 페이지로 이동
+          - href: {% url 'approval_pending' %} - 승인 대기 URL
+          - CSS 클래스: tab (탭 스타일)
+      -->
+      <a href="{% url 'approval_pending' %}" class="tab">승인대기</a>
+      
+      <!-- 
+        1:1문의관리 탭
+        
+        목적: 1:1 문의 관리 페이지로 이동
+          - href: {% url 'qna_list' %} - 1:1 문의 목록 URL
+          - CSS 클래스: tab (탭 스타일)
+      -->
+      <a href="{% url 'qna_list' %}" class="tab">1:1문의관리</a>
+    </div>
+    
+
+    <!-- 
+      검색 섹션
+      
+      목적: 사용자 검색 기능을 제공하는 섹션
+        - 사용자 경험(UX) 개선: 관리자가 원하는 사용자를 쉽게 찾을 수 있도록 검색 기능 제공
+        - 검색 조건: ID, 이름, 이메일, 전화번호로 검색 가능
+        - 더미 데이터 관리: 개발 환경에서 더미 데이터 생성/삭제 기능 제공
+    -->
+    <div class="search-section">
+      <!-- 
+        디버깅 정보 (개발 환경용)
+        
+        목적: 검색 결과에 대한 디버깅 정보 표시 (개발 환경에서 유용)
+          - 조건: search_type과 search_keyword가 모두 있을 때만 표시
+          - CSS 클래스: debug-info (디버깅 정보 스타일)
+          - 표시 정보:
+            → 전체 사용자 수: {{ total_users_count }} - 전체 사용자 수
+            → 검색 결과 수: {{ search_result_count }} - 검색 조건에 맞는 사용자 수
+            → 검색어: "{{ search_keyword }}" - 사용자가 입력한 검색어
+          - 주의: 프로덕션 환경에서는 제거 가능
+      -->
+      {% if search_type and search_keyword %}
+      <div class="debug-info">
+        전체 사용자: {{ total_users_count }}명 | 검색 결과: {{ search_result_count }}명 | 검색어: "{{ search_keyword }}"
+      </div>
+      {% endif %}
+      
+      <!-- 
+        검색 폼
+        
+        목적: 사용자 검색을 위한 폼
+          - method="post": POST 메서드로 검색 파라미터를 전달
+          - action: {% url 'user_list' %} - 사용자 목록 URL (자기 자신)
+          - CSS 클래스: search-form (검색 폼 스타일)
+      -->
+      <form method="post" action="{% url 'user_list' %}" class="search-form">
+        {% csrf_token %}
+        <!-- 
+          검색 조건 선택 드롭다운
+          
+          목적: 검색할 필드를 선택
+            - name="search_type": 서버에서 검색 조건을 읽기 위한 필드 이름
+            - CSS 클래스: search-select (검색 선택 드롭다운 스타일)
+            - 옵션:
+              → value="": 기본값 (검색 조건 미선택)
+              → value="username": ID로 검색
+              → value="name": 이름으로 검색
+              → value="email": 이메일로 검색
+              → value="phone": 전화번호로 검색
+            - selected 속성: 현재 선택된 검색 조건 표시
+        -->
+        <select name="search_type" class="search-select">
+          <option value="">검색조건</option>
+          <option value="username" {% if search_type == 'username' %}selected{% endif %}>ID</option>
+          <option value="name" {% if search_type == 'name' %}selected{% endif %}>이름</option>
+          <option value="email" {% if search_type == 'email' %}selected{% endif %}>이메일</option>
+          <option value="phone" {% if search_type == 'phone' %}selected{% endif %}>전화번호</option>
+        </select>
+        
+        <!-- 
+          검색어 입력 필드
+          
+          목적: 검색할 키워드를 입력
+            - type="text": 텍스트 입력 필드
+            - name="search_keyword": 서버에서 검색어를 읽기 위한 필드 이름
+            - value="{{ search_keyword }}": 이전에 입력한 검색어 유지
+            - placeholder: "조건 선택 후 입력" - 사용자 안내 메시지
+            - CSS 클래스: search-input (검색 입력 필드 스타일)
+        -->
+        <input 
+          type="text" 
+          name="search_keyword" 
+          value="{{ search_keyword }}" 
+          placeholder="조건 선택 후 입력" 
+          class="search-input"
+        >
+        
+        <!-- 
+          검색 버튼
+          
+          목적: 검색 폼을 제출하여 검색 실행
+            - type="submit": 폼 제출 버튼
+            - CSS 클래스: search-btn (검색 버튼 스타일)
+            - 아이콘: 🔍 (검색 아이콘)
+        -->
+        <button type="submit" class="search-btn">
+          <span class="search-icon">🔍</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- 
+      사용자 목록 테이블 섹션
+      
+      목적: 사용자 목록을 테이블로 표시하고 정렬 기능 제공
+        - 사용자 경험(UX) 개선: 사용자 정보를 테이블로 표시하여 가독성 향상
+        - 정렬 기능: 모든 컬럼에 정렬 기능 제공
+        - 행 클릭: 사용자 행 클릭 시 상세 정보를 AJAX로 로드
+    -->
+    <div class="table-container">
+      <!-- 
+        사용자 목록 테이블
+        
+        목적: 사용자 목록을 테이블로 표시
+          - CSS 클래스: user-table (사용자 테이블 스타일)
+          - 구조: thead (헤더), tbody (본문)
+      -->
+      <table class="user-table">
+        <!-- 
+          테이블 헤더
+          
+          목적: 테이블의 컬럼 제목 표시
+            - 정렬 기능: 모든 컬럼에 정렬 기능 제공
+            - 정렬 방향 표시: 현재 정렬 필드에 화살표 표시 (↑ 또는 ↓)
+        -->
+        <thead>
+          <tr>
+            <!-- 
+              No. 컬럼 (정렬 가능)
+              
+              목적: 사용자 번호를 표시하고 정렬 기능 제공
+                - data-sort-field="user_id": 정렬 필드 이름
+                - data-current-sort: 현재 정렬 필드 (뷰에서 전달)
+                - data-current-order: 현재 정렬 방향 (뷰에서 전달)
+                - 정렬 방향 표시: 현재 정렬 필드가 'user_id'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="user_id" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                No.
+                {% if sort_field == 'user_id' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              ID 컬럼 (정렬 가능)
+              
+              목적: 사용자 ID(로그인 ID)를 표시하고 정렬 기능 제공
+                - data-sort-field="username": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'username'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="username" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                ID
+                {% if sort_field == 'username' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              이름 컬럼 (정렬 가능)
+              
+              목적: 사용자 이름을 표시하고 정렬 기능 제공
+                - data-sort-field="name": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'name'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="name" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                이름
+                {% if sort_field == 'name' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              생년월일 컬럼 (정렬 가능)
+              
+              목적: 사용자의 생년월일을 표시하고 정렬 기능 제공
+                - data-sort-field="resident_reg_no": 정렬 필드 이름 (주민번호로 정렬)
+                - 정렬 방향 표시: 현재 정렬 필드가 'resident_reg_no'이면 화살표 표시
+                - 주의: 주민번호로 정렬하지만 화면에는 생년월일만 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="resident_reg_no" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                생년월일
+                {% if sort_field == 'resident_reg_no' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              성별 컬럼 (정렬 가능)
+              
+              목적: 사용자의 성별을 표시하고 정렬 기능 제공
+                - data-sort-field="gender": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'gender'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="gender" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                성별
+                {% if sort_field == 'gender' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              전화번호 컬럼 (정렬 가능)
+              
+              목적: 사용자의 전화번호를 표시하고 정렬 기능 제공
+                - data-sort-field="phone": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'phone'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="phone" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                전화번호
+                {% if sort_field == 'phone' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              이메일 컬럼 (정렬 가능)
+              
+              목적: 사용자의 이메일을 표시하고 정렬 기능 제공
+                - data-sort-field="email": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'email'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="email" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                이메일
+                {% if sort_field == 'email' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              주소 컬럼 (정렬 가능)
+              
+              목적: 사용자의 주소를 표시하고 정렬 기능 제공
+                - data-sort-field="address": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'address'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="address" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                주소
+                {% if sort_field == 'address' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+            
+            <!-- 
+              생성일시 컬럼 (정렬 가능)
+              
+              목적: 사용자 계정 생성일시를 표시하고 정렬 기능 제공
+                - data-sort-field="created_at": 정렬 필드 이름
+                - 정렬 방향 표시: 현재 정렬 필드가 'created_at'이면 화살표 표시
+            -->
+            <th>
+              <a href="#" data-sort-field="created_at" data-current-sort="{{ sort_field }}" data-current-order="{{ sort_order }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                생성일시
+                {% if sort_field == 'created_at' %}
+                  {% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+                {% endif %}
+              </a>
+            </th>
+          </tr>
+        </thead>
+        
+        <!-- 
+          테이블 본문
+          
+          목적: 사용자 목록을 테이블 행으로 표시
+            - 반복문: users_with_number 리스트를 순회하며 각 사용자 정보를 행으로 표시
+            - 데이터 표시: 사용자의 각 정보 필드를 테이블 셀로 표시
+            - 행 클릭: 행 클릭 시 상세 정보를 AJAX로 로드
+        -->
+        <tbody>
+          <!-- 
+            사용자 목록 반복문
+            
+            목적: 사용자 목록을 순회하며 테이블 행 생성
+              - users_with_number: 뷰에서 전달된 사용자 목록 (번호 포함)
+                → 각 항목은 dict 형태: {'user': Users 객체, 'number': int, 'birth_date': str}
+              - item: 현재 순회 중인 항목
+                → item.user: 사용자 객체 (Users 모델 인스턴스)
+                → item.number: 목록 번호 (페이지네이션 고려)
+                → item.birth_date: 생년월일 (주민번호에서 추출한 생년월일)
+          -->
+          {% for item in users_with_number %}
+            <!-- 
+              사용자 정보 행
+              
+              목적: 사용자의 정보를 테이블 행으로 표시
+                - data-user-id: 사용자 ID (JavaScript에서 행 클릭 이벤트 처리에 사용)
+                - CSS 클래스: user-row (사용자 행 스타일)
+                - item.user: 사용자 객체 (Users 모델 인스턴스)
+            -->
+            <tr data-user-id="{{ item.user.user_id }}" class="user-row{% if item.is_new_user %} new-user-row{% endif %}">
+              <!-- 
+                번호 셀
+                
+                목적: 목록 번호 표시 (페이지네이션 고려)
+                  - {{ item.number }}: 페이지네이션을 고려한 순번
+              -->
+              <td>{{ item.number }}</td>
+              
+              <!-- 
+                ID 셀
+                
+                목적: 사용자 ID(로그인 ID) 표시
+                  - {{ item.user.username }}: 사용자의 로그인 ID
+                    → item.user: 사용자 객체
+                    → username: 사용자의 로그인 ID
+              -->
+              <td>{{ item.user.username }}</td>
+              
+              <!-- 
+                이름 셀
+                
+                목적: 사용자 이름 표시
+                  - {{ item.user.name }}: 사용자 이름
+                    → name: 사용자의 이름
+              -->
+              <td>{{ item.user.name }}</td>
+              
+              <!-- 
+                생년월일 셀
+                
+                목적: 사용자의 생년월일 표시
+                  - {{ item.birth_date|default:"-" }}: 생년월일 (주민번호에서 추출)
+                    → item.birth_date: 주민번호에서 추출한 생년월일 (뷰에서 처리)
+                    → |default:"-": birth_date가 없으면 "-" 표시
+              -->
+              <td>{{ item.birth_date|default:"-" }}</td>
+              
+              <!-- 
+                성별 셀
+                
+                목적: 사용자의 성별을 한글로 표시
+                  - 조건부 표시: item.user.gender == 'M'이면 '남', 그 외는 '여' 표시
+                    → gender: 사용자의 성별 ('M' 또는 'F')
+              -->
+              <td>{% if item.user.gender == 'M' %}남{% else %}여{% endif %}</td>
+              
+              <!-- 
+                전화번호 셀 (마스킹 처리)
+                
+                목적: 사용자 전화번호를 마스킹 처리하여 표시 (개인정보 보호)
+                  - {{ item.user.phone|mask_phone }}: 사용자 전화번호 마스킹 처리
+                    → phone: 사용자의 전화번호
+                    → mask_phone: 전화번호 마스킹 필터 (010 - 첫 번째 숫자*** - ****)
+              -->
+              <td>{{ item.user.phone|mask_phone }}</td>
+              
+              <!-- 
+                이메일 셀
+                
+                목적: 사용자 이메일 표시
+                  - {{ item.user.email }}: 사용자 이메일 주소
+                    → email: 사용자의 이메일 주소
+              -->
+              <td>{{ item.user.email }}</td>
+              
+              <!-- 
+                주소 셀
+                
+                목적: 사용자 주소 표시 (동까지만 표시)
+                  - 목록에서는 주소의 "동"까지만 표시하여 간결하게 표시
+                  - 상세 정보에서는 전체 주소가 표시됨
+                  - 뷰에서 처리한 address_short 사용
+                  - 예: "서울특별시 강남구 역삼동 123-45" → "서울특별시 강남구 역삼동"
+              -->
+              <td>{{ item.address_short|default:"-" }}</td>
+              
+              <!-- 
+                생성일시 셀
+                
+                목적: 사용자 계정 생성일시 표시
+                  - {{ item.user.created_at|date:"Y.m.d" }}: 사용자 계정 생성일
+                    → created_at: 사용자 계정 생성일
+                    → |date:"Y.m.d": 날짜 형식을 "YYYY.MM.DD" 형식으로 변환
+                    → 예: "2024.01.15"
+              -->
+              <td>{{ item.user.created_at|date:"Y.m.d" }}</td>
+            </tr>
+          {% empty %}
+          <!-- 
+            빈 목록 처리
+            
+            목적: 사용자 데이터가 없을 때 메시지 표시
+              - empty: 반복문에서 반복할 항목이 없을 때 실행
+              - colspan="9": 9개 컬럼을 병합하여 메시지 표시
+              - CSS 클래스: no-data (데이터 없음 메시지 스타일)
+          -->
+          <tr>
+            <td colspan="9" class="no-data">사용자 데이터가 없습니다.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 
+      페이지네이션 섹션
+      
+      목적: 많은 데이터를 페이지 단위로 나누어 표시하고 페이지 이동 기능 제공
+        - 사용자 경험(UX) 개선: 많은 데이터를 페이지 단위로 나누어 가독성 향상
+        - 파라미터 유지: 정렬 필드, 정렬 방향, 검색 조건, 검색어를 URL 파라미터로 유지
+        - AJAX 처리: JavaScript에서 AJAX로 페이지네이션 처리하여 페이지 새로고침 없이 목록 업데이트
+      
+      주요 기능:
+        - 첫 페이지로 이동: « 버튼
+        - 이전 페이지로 이동: < 버튼
+        - 페이지 번호 표시: 현재 페이지 ±3 범위의 페이지 번호 표시 (현재 페이지가 1일 때는 4까지 표시)
+        - 다음 페이지로 이동: > 버튼
+        - 마지막 페이지로 이동: » 버튼
+      
+      조건부 표시:
+        - 전체 페이지가 1개일 때는 페이지네이션 버튼을 표시하지 않음
+    -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+      <!-- 
+        이전 페이지 버튼 영역
+        
+        목적: 첫 페이지로 이동 및 이전 페이지로 이동 버튼 표시
+          - page_obj.has_previous: 이전 페이지가 있는지 확인
+          - 이전 페이지가 있으면 링크 버튼 표시
+          - 이전 페이지가 없으면 비활성화된 버튼 표시
+      -->
+      {% if page_obj.has_previous %}
+        <!-- 
+          첫 페이지로 이동 링크
+          
+          목적: 첫 페이지(1페이지)로 이동
+            - href: ?page=1 + 정렬 파라미터 + 검색 파라미터
+            - CSS 클래스: page-link (페이지 링크 스타일)
+            - 텍스트: « (첫 페이지 기호)
+        -->
+        <a href="#" class="page-link" data-page="1" data-sort="{{ sort_field }}" data-order="{{ sort_order }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">«</a>
+        
+        <!-- 
+          이전 페이지로 이동 링크
+          
+          목적: 현재 페이지의 이전 페이지로 이동
+            - href: # (JavaScript로 처리)
+            - data-page: 이전 페이지 번호
+            - page_obj.previous_page_number: 이전 페이지 번호
+            - CSS 클래스: page-link (페이지 링크 스타일)
+            - 텍스트: < (이전 페이지 기호)
+        -->
+        <a href="#" class="page-link" data-page="{{ page_obj.previous_page_number }}" data-sort="{{ sort_field }}" data-order="{{ sort_order }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}"><</a>
+      {% else %}
+        <!-- 
+          비활성화된 첫 페이지 버튼
+          
+          목적: 첫 페이지에 있을 때 비활성화된 버튼 표시
+            - CSS 클래스: page-link disabled (비활성화된 페이지 링크 스타일)
+            - 텍스트: « (첫 페이지 기호)
+        -->
+        <span class="page-link disabled">«</span>
+        
+        <!-- 
+          비활성화된 이전 페이지 버튼
+          
+          목적: 첫 페이지에 있을 때 비활성화된 버튼 표시
+            - CSS 클래스: page-link disabled (비활성화된 페이지 링크 스타일)
+            - 텍스트: < (이전 페이지 기호)
+        -->
+        <span class="page-link disabled"><</span>
+      {% endif %}
+
+      <!-- 
+        페이지 번호 표시 영역
+        
+        목적: 페이지 번호를 표시하고 현재 페이지를 하이라이트
+          - page_obj.paginator.num_pages: 전체 페이지 수
+          - page_obj.paginator.page_range: 페이지 번호 범위 (1부터 전체 페이지 수까지)
+          - 현재 페이지 ±3 범위의 페이지 번호만 표시 (너무 많은 페이지 번호 표시 방지)
+      -->
+      {% if page_obj.paginator.num_pages > 0 %}
+        <!-- 
+          페이지 번호 반복문
+          
+          목적: 페이지 번호를 순회하며 링크 또는 현재 페이지 표시
+            - num: 현재 순회 중인 페이지 번호
+        -->
+        {% for num in page_obj.paginator.page_range %}
+          <!-- 
+            현재 페이지 표시
+            
+            목적: 현재 페이지를 하이라이트하여 표시
+              - page_obj.number == num: 현재 페이지 번호와 일치하는지 확인
+              - CSS 클래스: page-link active (현재 페이지 스타일)
+          -->
+          {% if page_obj.number == num %}
+            <span class="page-link active">{{ num }}</span>
+          <!-- 
+            인접 페이지 번호 링크
+            
+            목적: 현재 페이지를 중심으로 항상 4개의 페이지 번호를 링크로 표시
+              - 현재 페이지가 1일 때: 1, 2, 3, 4 표시
+              - 현재 페이지가 2일 때: 1, 2, 3, 4 표시
+              - 현재 페이지가 3 이상일 때: 현재 페이지 - 1부터 현재 페이지 + 2까지 표시
+              - 정렬 및 검색 파라미터 유지: sort, order, search_type, search_keyword 파라미터를 URL에 포함
+          -->
+          {% elif page_obj.number == 1 and num <= 4 %}
+            <a href="#" class="page-link" data-page="{{ num }}" data-sort="{{ sort_field }}" data-order="{{ sort_order }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">{{ num }}</a>
+          {% elif page_obj.number > 1 and num >= page_obj.number|add:'-1' and num <= page_obj.number|add:'2' %}
+            <a href="#" class="page-link" data-page="{{ num }}" data-sort="{{ sort_field }}" data-order="{{ sort_order }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <!-- 
+          페이지가 없을 때 기본 페이지 번호 표시
+          
+          목적: 페이지가 없을 때 기본적으로 1페이지 표시
+            - CSS 클래스: page-link active (현재 페이지 스타일)
+        -->
+        <span class="page-link active">1</span>
+      {% endif %}
+
+      <!-- 
+        다음 페이지 버튼 영역
+        
+        목적: 다음 페이지로 이동 및 마지막 페이지로 이동 버튼 표시
+          - page_obj.has_next: 다음 페이지가 있는지 확인
+          - 다음 페이지가 있으면 링크 버튼 표시
+          - 다음 페이지가 없으면 비활성화된 버튼 표시
+      -->
+      {% if page_obj.has_next %}
+        <!-- 
+          다음 페이지로 이동 링크
+          
+          목적: 현재 페이지의 다음 페이지로 이동
+            - href: ?page={{ page_obj.next_page_number }} + 정렬 파라미터 + 검색 파라미터
+            - page_obj.next_page_number: 다음 페이지 번호
+            - CSS 클래스: page-link (페이지 링크 스타일)
+            - 텍스트: > (다음 페이지 기호)
+        -->
+        <a href="#" class="page-link" data-page="{{ page_obj.next_page_number }}" data-sort="{{ sort_field }}" data-order="{{ sort_order }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">></a>
+        
+        <!-- 
+          마지막 페이지로 이동 링크
+          
+          목적: 마지막 페이지로 이동
+            - href: # (JavaScript로 처리)
+            - data-page: 마지막 페이지 번호
+            - page_obj.paginator.num_pages: 전체 페이지 수 (마지막 페이지 번호)
+            - CSS 클래스: page-link (페이지 링크 스타일)
+            - 텍스트: » (마지막 페이지 기호)
+        -->
+        <a href="#" class="page-link" data-page="{{ page_obj.paginator.num_pages }}" data-sort="{{ sort_field }}" data-order="{{ sort_order }}" data-search-type="{{ search_type|default:'' }}" data-search-keyword="{{ search_keyword|default:'' }}">»</a>
+      {% else %}
+        <!-- 
+          비활성화된 다음 페이지 버튼
+          
+          목적: 마지막 페이지에 있을 때 비활성화된 버튼 표시
+            - CSS 클래스: page-link disabled (비활성화된 페이지 링크 스타일)
+            - 텍스트: > (다음 페이지 기호)
+        -->
+        <span class="page-link disabled">></span>
+        
+        <!-- 
+          비활성화된 마지막 페이지 버튼
+          
+          목적: 마지막 페이지에 있을 때 비활성화된 버튼 표시
+            - CSS 클래스: page-link disabled (비활성화된 페이지 링크 스타일)
+            - 텍스트: » (마지막 페이지 기호)
+        -->
+        <span class="page-link disabled">»</span>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 
+      선택 사용자 상세정보 섹션
+      
+      목적: 선택된 사용자의 상세 정보를 표시하는 섹션
+        - 사용자 경험(UX) 개선: 테이블 행 클릭 시 해당 사용자의 상세 정보를 AJAX로 로드하여 표시
+        - 데이터 표시: 사용자의 기본 정보, 연락처, 주소, 즐겨찾기 병원 등을 그리드 레이아웃으로 표시
+        - 조건부 표시: selected_user가 있을 때만 상세 정보 표시, 없으면 플레이스홀더 표시
+      
+      동작 방식:
+        1. selected_user 변수가 존재하는지 확인
+        2. selected_user가 있으면 상세 정보 섹션 표시
+        3. selected_user가 없으면 플레이스홀더 섹션 표시 (행 클릭 시 AJAX로 상세 정보 로드)
+    -->
+    {% if selected_user %}
+    <!-- 
+      상세 정보 섹션 (사용자가 선택된 경우)
+      
+      목적: 선택된 사용자의 상세 정보를 표시
+        - CSS 클래스: 
+          → user-detail-section: 상세 정보 섹션 스타일
+          → card shadow-sm: 카드 스타일 및 그림자 효과
+        - 내용: 사용자의 각 정보 필드를 그리드 레이아웃으로 표시
+    -->
+    <div class="user-detail-section card shadow-sm">
+      <div class="card-body">
+        <h3 class="detail-title card-title border-bottom pb-3 mb-4">선택 사용자 상세정보</h3>
+        <div class="detail-grid row g-3">
+          <!-- 
+            이름 정보 항목
+            
+            목적: 사용자 이름을 표시
+              - col-md-6: 중간 화면 크기 이상에서 6컬럼 (50% 너비)
+              - detail-label: "이름" (라벨)
+              - detail-value: {{ selected_user.name }} (사용자 이름)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">이름</span>
+              <div class="detail-value">{{ selected_user.name }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            ID 정보 항목
+            
+            목적: 사용자 ID(로그인 ID)를 표시
+              - detail-label: "id" (라벨)
+              - detail-value: {{ selected_user.username }} (사용자 로그인 ID)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">id</span>
+              <div class="detail-value">{{ selected_user.username }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            생년월일 정보 항목
+            
+            목적: 사용자의 생년월일을 표시
+              - detail-label: "생년월일" (라벨)
+              - detail-value: {{ birth_date|default:"-" }} (생년월일)
+                → birth_date: 주민번호에서 추출한 생년월일 (뷰에서 전달)
+                → |default:"-": birth_date가 없으면 "-" 표시
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">생년월일</span>
+              <div class="detail-value">{{ birth_date|default:"-" }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            성별 정보 항목
+            
+            목적: 사용자의 성별을 한글로 표시
+              - detail-label: "성별" (라벨)
+              - detail-value: 조건부 표시
+                → selected_user.gender == 'M'이면 '남' 표시
+                → 그 외는 '여' 표시
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">성별</span>
+              <div class="detail-value">{% if selected_user.gender == 'M' %}남{% else %}여{% endif %}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            전화번호 정보 항목
+            
+            목적: 사용자 전화번호를 표시
+              - detail-label: "전화번호" (라벨)
+              - detail-value: {{ selected_user.phone }} (사용자 전화번호)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">전화번호</span>
+              <div class="detail-value">{{ selected_user.phone }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            주소 정보 항목
+            
+            목적: 사용자 주소를 표시
+              - detail-label: "주소" (라벨)
+              - detail-value: {{ address_formatted|default:selected_user.address }} (포맷팅된 주소 또는 원본 주소)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">주소</span>
+              <div class="detail-value">{{ address_formatted|default:selected_user.address }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            이메일 정보 항목
+            
+            목적: 사용자 이메일 주소를 표시
+              - detail-label: "email" (라벨)
+              - detail-value: {{ selected_user.email }} (사용자 이메일 주소)
+          -->
+          <div class="col-md-6">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">email</span>
+              <div class="detail-value">{{ selected_user.email }}</div>
+            </div>
+          </div>
+          
+          <!-- 
+            즐겨찾기 병원 정보 항목 (조건부 표시, 전체 너비)
+            
+            목적: 사용자가 즐겨찾기한 병원 목록을 표시
+              - 조건: favorite_hospitals가 있는 경우에만 표시
+              - col-md-12: 중간 화면 크기 이상에서 12컬럼 (100% 너비, 전체 너비)
+              - detail-label: "즐겨찾기 병원" (라벨)
+              - detail-value: 즐겨찾기 병원 목록 또는 "없음"
+                → favorite_hospitals: 사용자가 즐겨찾기한 병원 목록 (리스트)
+                  → 있으면: 병원명을 쉼표로 구분하여 표시
+                  → 없으면: "없음" 표시
+                → |join:", ": 리스트의 각 항목을 쉼표와 공백으로 구분하여 문자열로 변환
+          -->
+          <div class="col-md-12">
+            <div class="detail-item">
+              <span class="detail-label d-block fw-bold">즐겨찾기 병원</span>
+              <div class="detail-value">
+                {% if favorite_hospitals %}
+                  {{ favorite_hospitals|join:", " }}
+                {% else %}
+                  없음
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <!-- 
+      플레이스홀더 섹션 (사용자가 선택되지 않은 경우)
+      
+      목적: 사용자가 선택되지 않았을 때 플레이스홀더 표시
+        - CSS 클래스: 
+          → user-detail-section: 상세 정보 섹션 스타일
+          → placeholder-hidden: 플레이스홀더 숨김 스타일 (레이아웃 유지를 위해 공간만 차지)
+        - 동작: 테이블 행 클릭 시 AJAX로 상세 정보를 로드하여 이 섹션에 표시
+        - 레이아웃 유지: 플레이스홀더로 공간을 차지하여 페이지네이션 시 레이아웃이 깨지지 않도록 함
+    -->
+    <div class="user-detail-section placeholder-hidden"></div>
+    {% endif %}
+  </div>
+
+  <!-- 
+    JavaScript 파일 로드
+    
+    목적: 페이지의 동적 기능을 제공하기 위한 JavaScript 파일 로드
+      - 로드 순서: admin_common.js를 먼저 로드한 후 user_list.js를 로드
+      - admin_common.js: 관리자 패널 공통 JavaScript 함수들
+        → 페이지네이션, 정렬, 검색 등 공통 기능
+      - user_list.js: 사용자 목록 페이지 전용 JavaScript 함수들
+        → 사용자 선택, 테이블 행 클릭 이벤트 등
+  -->
+  <script src="{% static 'admin_panel/js/admin_common.js' %}"></script>
+  <script src="{% static 'admin_panel/js/user_list.js' %}"></script>
+</body>
+</html>

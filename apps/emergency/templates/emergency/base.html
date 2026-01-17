@@ -1,0 +1,60 @@
+<!-- emergency/templates/emergency/base.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CareBridge 응급실{% endblock %}</title>
+    {% load static %}
+    <link rel="icon" href="{% static 'core/img/favicon.png' %}" type="image/png">
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey={{ KAKAO_MAP_JS_KEY }}&autoload=false&libraries=services"></script>
+    <script>const GOOGLE_API_KEY = "{{ GOOGLE_API_KEY }}";</script>
+
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'core/css/_header.css' %}">
+    <link rel="stylesheet" href="{% static 'emergency/css/emergency.css' %}">
+    <link rel="stylesheet" href="{% static 'emergency/css/modal.css' %}">
+    <link rel="stylesheet" href="{% static 'emergency/css/detail.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/footer.css' %}">
+
+
+</head>
+<body class="has-footer">
+  {% include "core/_header.html" %}
+<div class="page-wrap">
+    {% block content %}{% endblock %}
+</div>
+
+{% include "core/footer.html" %}
+
+<!-- JS -->
+<script src="{% static 'emergency/js/emergency.js' %}"></script>
+<script src="{% static 'emergency/js/region_modal.js' %}"></script>
+<script src="{% static 'emergency/js/filter_modal.js' %}"></script>
+<script src="{% static 'emergency/js/detail_modal.js' %}"></script>
+
+<script>
+  // ESC로 모든 모달 닫기
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".modal-overlay").forEach(function(m) {
+        m.classList.add("hidden");
+      });
+    }
+  });
+
+  // 모달 오버레이 클릭 시 모달 닫기 (모달 내부 콘텐츠 클릭 시는 닫히지 않음)
+  document.addEventListener("click", function(e) {
+    // 클릭된 요소가 modal-overlay인지 확인 (오버레이의 빈 공간 클릭 시만)
+    const modalOverlay = e.target.closest(".modal-overlay");
+    if (modalOverlay && e.target === modalOverlay) {
+      modalOverlay.classList.add("hidden");
+    }
+  });
+
+</script>
+
+</body>
+</html>

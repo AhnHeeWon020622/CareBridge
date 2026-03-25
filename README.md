@@ -55,14 +55,6 @@
 total_score = distance_score * 0.60 + congestion_score * 0.40
 ```
 
-```python
-total_score = (
-    distance_score * 0.60 +
-    congestion_score * 0.30 +
-    equipment_score * 0.10
-)
-```
-
 #### 2. 뇌졸중/교통사고(거리 60% + 혼잡도 30% + 장비 10%)
 ```python
 total_score = (

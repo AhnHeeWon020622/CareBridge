@@ -12,16 +12,6 @@
 
 ---
 
-## ⚙️ 기술 스택
-
-- **Frontend** : HTML, CSS, JavaScript (AJAX), jQuery
-- **Backend** : Django
-- **Database** : MySQL (Django ORM)
-- **Server** : AWS EC2
-- **API** : 공공데이터포털 API(XML), Kakao Map API
-
----
-
 ## 🏗️ 시스템 구조
 
 ```markdown
@@ -213,7 +203,7 @@ API 장애 상황에서도 서비스 안정성 유지
 
 ---
 
-## 발표영상
+## 발표영상 - 12분 30초 ~ 17분 15초(개인발)
 
 [서비스 시연 영상(바로가기)](https://youtu.be/T2mVEn3PbGM?si=QJed2NFk4qqhC6LP)
 
